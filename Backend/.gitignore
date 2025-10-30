@@ -1,0 +1,19 @@
+# Node
+node_modules/
+npm-debug.log
+
+# Environment
+.env
+.env.local
+
+# Build
+/dist
+/build
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+logs/
+*.log

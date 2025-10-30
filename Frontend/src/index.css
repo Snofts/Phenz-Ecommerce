@@ -26,3 +26,7 @@ a.active hr{
     color: white ;
     }
 }
+
+.green-border{
+    border-color: #277130;
+}

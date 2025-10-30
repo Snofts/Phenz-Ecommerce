@@ -13,8 +13,13 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SearchBar from './components/SearchBar';
 import { ToastContainer, toast } from 'react-toastify';
+import Verify from './pages/Verify';
+import axios from 'axios';
 
 const App = () => {
+
+axios.defaults.withCredentials = true;
+
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
       <ToastContainer />
@@ -31,6 +36,7 @@ const App = () => {
         <Route path='/login' element={<Login/>} />
         <Route path='/place-order' element={<PlaceOrder/>} />
         <Route path='/orders' element={<Orders/>} />
+        <Route path='/verify' element={<Verify/>} />
       </Routes>
 
       <Footer />
