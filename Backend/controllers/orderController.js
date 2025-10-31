@@ -136,12 +136,6 @@ const verifyPaystackPayment = async (req, res) => {
 
 
 
-
-
-
-
-
-
 // All orders data for Admin Panel
 const allOrders = async (req, res) => {
   try {

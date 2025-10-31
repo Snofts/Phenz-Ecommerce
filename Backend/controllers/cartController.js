@@ -1,9 +1,20 @@
 import userModel from './../models/userModel.js';
+import jwt from 'jsonwebtoken';
+
+
+// Helper to get userId from token cookie
+const getUserIdFromToken = (req) => {
+  const token = req.cookies.token;
+  if (!token) throw new Error("Not authenticated");
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  return decoded.id; // Make sure your token encodes { id: user._id }
+};
 
 // Add product to user cart
 const addToCart = async (req, res) => {
     try{
-        const {userId, itemId, token, size} = req.body
+        const userId = getUserIdFromToken(req);
+        const {itemId, size} = req.body
 
         const userData = await userModel.findById(userId)
         let cartData = await userData.cartData
@@ -32,7 +43,8 @@ const addToCart = async (req, res) => {
 // update user cart
 const updateCart = async (req, res) => {
     try{
-        const {userId, itemId, token, size, quantity} = req.body
+        const userId = getUserIdFromToken(req);
+        const {itemId, size, quantity} = req.body
         const userData = await userModel.findById(userId)
         let cartData = await userData.cartData
 
@@ -51,7 +63,7 @@ const updateCart = async (req, res) => {
 // get user cart
 const getUserCart = async (req, res) => {
     try{
-        const {userId} = req.body
+        const userId = getUserIdFromToken(req);
         const userData = await userModel.findById(userId)
         const cartData = await userData.cartData
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {Routes, Route} from 'react-router-dom'
 import Home from './pages/Home'
 import Collection from './pages/collection';
@@ -19,6 +19,22 @@ import axios from 'axios';
 const App = () => {
 
 axios.defaults.withCredentials = true;
+
+ useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const res = await axios.post('/api/user/verify');
+        if (res.data.success) {
+          console.log("User verified:", res.data.user);
+        } else {
+          console.log("User not authenticated");
+        }
+      } catch (err) {
+        console.error("Verification failed:", err);
+      }
+    };
+    verifyUser();
+  }, []);
 
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>

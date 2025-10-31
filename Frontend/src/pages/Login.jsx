@@ -5,34 +5,46 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Sign Up");
-  const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
+  const { token, setToken, navigate, backendUrl, getUserCart } = useContext(ShopContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true); // start loading
     try {
       if (currentState === "Sign Up") {
-        const response = await axios.post(backendUrl + "/api/user/register", {
-          name,
-          email,
-          password,
-        });
+        const response = await axios.post(
+          backendUrl + "/api/user/register",
+          {
+            name,
+            email,
+            password,
+          },
+          { withCredentials: true }
+        );
         if (response.data.success) {
-          setToken(response.data.token);
-          localStorage.setItem("token", response.data.token);
+          setToken("valid"); // Cookie-based session confirmed
+          toast.success(response.data.message || "Login successful");
+          navigate("/");
         } else {
           toast.error(response.data.message);
         }
       } else {
-        const response = await axios.post(backendUrl + "/api/user/login", {
-          email,
-          password,
-        });
+        const response = await axios.post(
+          backendUrl + "/api/user/login",
+          {
+            email,
+            password,
+          },
+          { withCredentials: true }
+        );
         if (response.data.success) {
-          setToken(response.data.token);
-          localStorage.setItem("token", response.data.token);
+          setToken("valid"); // Cookie-based session confirmed
+          toast.success(response.data.message || "Login successful");
+          navigate("/");
         } else {
           toast.error(response.data.message);
         }
@@ -40,10 +52,13 @@ const Login = () => {
     } catch (error) {
       console.log(error);
       toast.error(error.message);
+    } finally {
+      setLoading(false); // stop loading no matter what
     }
   };
+
   useEffect(() => {
-    if(token){
+    if (token === "valid") {
       navigate("/");
     }
   }, [token]);
@@ -86,7 +101,7 @@ const Login = () => {
         required
       />
       <div className="w-full flex justify-between text-sm mt-[-8px]">
-        <p className="cursor-pointer">Fortgot password?</p>
+        <p className="cursor-pointer">Forgot password?</p>
         {currentState === "Login" ? (
           <p
             onClick={() => setCurrentState("Sign Up")}
@@ -103,8 +118,22 @@ const Login = () => {
           </p>
         )}
       </div>
-      <button className="bg-black text-white font-light px-8 py-2 mt-4">
-        {currentState === "Login" ? "SIgn In" : "Sign Up"}
+      <button
+        disabled={loading}
+        className={`bg-black text-white font-light px-8 py-2 mt-4 ${
+          loading ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+      >
+        {loading ? (
+          <>
+            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            Please wait...
+          </>
+        ) : currentState === "Login" ? (
+          "Sign In"
+        ) : (
+          "Sign Up"
+        )}
       </button>
     </form>
   );

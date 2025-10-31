@@ -1,24 +1,23 @@
 import axios from "axios";
 import React from "react";
 import { useState } from "react";
-import { backendUrl } from "../App";
 import { toast } from "react-toastify";
 
-const Login = ({ setToken }) => {
+const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
-      const response = await axios.post(backendUrl + "/api/user/admin", {
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/user/admin", {
         email,
         password,
-      });
+      }, { withCredentials: true });
       console.log(response.data);
       if (response.data.success) {
-        setToken(response.data.token);
-        localStorage.setItem("token", response.data.token);
+        toast.success("Login successful");
+        setIsAuthenticated(true);
       } else {
         toast.error(response.data.message);
       }

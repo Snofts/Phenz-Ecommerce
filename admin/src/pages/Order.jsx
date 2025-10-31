@@ -2,24 +2,22 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
-import { backendUrl, currency } from "./../App";
+import { currency } from "./../App";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 
-const Order = ({ token }) => {
+const Order = () => {
   const [orders, setOrders] = useState([]);
 
   const fetchAllOrders = async () => {
-    if (!token) {
-      return null;
-    }
 
     try {
       const response = await axios.post(
-        backendUrl + "/api/order/list",
+        import.meta.env.VITE_BACKEND_URL + "/api/order/list",
         {},
-        { headers: { token } }
+        { withCredentials: true }
       );
+        console.log(response)
       if (response.data.success) {
         setOrders(response.data.orders.reverse());
       } else {
@@ -31,11 +29,11 @@ const Order = ({ token }) => {
     }
   };
 
-  console.log(orders)
+
 
   const statusHandler = async (event, orderId) => {
     try {
-      const response = await axios.post(backendUrl + '/api/order/status', {orderId, status:event.target.value}, {headers: {token}})
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/api/order/status', {orderId, status:event.target.value}, { withCredentials: true })
       if(response.data.success){
         await fetchAllOrders()
       }
@@ -47,7 +45,7 @@ const Order = ({ token }) => {
 
   useEffect(() => {
     fetchAllOrders();
-  }, [token]);
+  }, []);
 
   return (
     <div>

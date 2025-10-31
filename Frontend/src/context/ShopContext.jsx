@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+axios.defaults.withCredentials = true;
+
 
 export const ShopContext = createContext();
 
@@ -16,6 +18,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState("");
+  const [authChecked, setAuthChecked] = useState(false);
   const navigate = useNavigate();
 
   const addToCart = async (itemId, size) => {
@@ -42,8 +45,7 @@ const ShopContextProvider = (props) => {
       try {
         await axios.post(
           backendUrl + "/api/cart/add",
-          { itemId, size },
-          { headers: { token } }
+          { itemId, size }, { withCredentials: true }
         );
       } catch (error) {
         console.log(error);
@@ -79,8 +81,7 @@ const ShopContextProvider = (props) => {
       try {
         await axios.post(
           backendUrl + "/api/cart/update",
-          { itemId, size, quantity },
-          { headers: { token } }
+          { itemId, size, quantity }, { withCredentials: true }
         );
       } catch (error) {
         console.log(error);
@@ -112,7 +113,7 @@ const ShopContextProvider = (props) => {
       const response = await axios.get(backendUrl + "/api/product/list");
       if (response.data.success) {
         setProducts(response.data.products);
-        toast.error(response.data.message);
+        // toast.success(response.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -120,12 +121,11 @@ const ShopContextProvider = (props) => {
     }
   };
 
-  const getUserCart = async (token) => {
+  const getUserCart = async () => {
     try {
       const response = await axios.post(
         backendUrl + "/api/cart/get",
-        {},
-        { headers: { token } }
+        {}, { withCredentials: true }
       );
 
       if (response.data.success) {
@@ -137,22 +137,42 @@ const ShopContextProvider = (props) => {
     }
   };
 
+  const verifyUser = async () => {
+  try {
+    const res = await axios.get(backendUrl + "/api/user/verify", {
+      withCredentials: true,
+    });
+    if (res.data.success) {
+      setToken("valid"); // You can store anything to represent a logged-in state
+      getUserCart();
+    } else {
+      setToken("");
+    }
+  } catch (error) {
+    console.log(error);
+  }finally {
+    setAuthChecked(true);
+  }
+};
+
+  // useEffect(() => {
+  //   getProductData();
+  // }, []);
+
   useEffect(() => {
-    getProductData();
+  if (token === "valid") {
+    getProductData(); // fetch protected data only when cookie auth is confirmed
+    getUserCart();
+  }
+}, [token]);
+
+  useEffect(() => {
+    // if (!token && localStorage.getItem("token")) {
+    //   setToken(localStorage.getItem("token"));
+    //   getUserCart(localStorage.getItem("token"));
+    // }
+    verifyUser();
   }, []);
-
-  useEffect(() => {
-    if (token) {
-      getProductData(); // Fetch products after login
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (!token && localStorage.getItem("token")) {
-      setToken(localStorage.getItem("token"));
-      getUserCart(localStorage.getItem("token"));
-    }
-  });
 
   const value = {
     products,
@@ -172,6 +192,8 @@ const ShopContextProvider = (props) => {
     backendUrl,
     token,
     setToken,
+    authChecked,
+    getUserCart
   };
 
   return (
