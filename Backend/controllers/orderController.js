@@ -1,9 +1,12 @@
 import orderModal from "../models/orderModal.js";
 import userModel from "./../models/userModel.js";
 import crypto from 'crypto';
+import Paystack from 'paystack-api';
 
 
-const paystackClient = process.env.PAYSTACK_SECRET_KEY;
+const paystackClient = Paystack(process.env.PAYSTACK_SECRET_KEY);
+
+const deliveryCharges = 10; // Set a fixed delivery charge, can be dynamic based on location
 
 // Placing order using COD method
 const placeOrder = async (req, res) => {
@@ -66,7 +69,7 @@ const placeOrderPaystack = async (req, res) => {
 
     // === INITIALIZE PAYSTACK ===
     const transaction = await paystackClient.transaction.initialize({
-      email: req.user.email,
+      email: address.email,
       amount: amount * 100, // in kobo
       currency: "NGN",
       reference: newOrder._id.toString(),
@@ -82,7 +85,7 @@ const placeOrderPaystack = async (req, res) => {
       success: true,
       authorization_url: transaction.data.authorization_url,
       orderId: newOrder._id,
-      totalAmount,
+      totalAmount: amount
     });
 
     

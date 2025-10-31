@@ -64,6 +64,7 @@ const PlaceOrder = () => {
         amount: getCartAmount() + delivery_fee,
       };
 
+
       switch (method) {
         // API Call for COD
         case "cod": {
@@ -95,19 +96,19 @@ const PlaceOrder = () => {
               }
             );
 
-            console.log(res.data)
-
             if (res.data.success) {
               const { authorization_url, orderId } = res.data;
 
               const paystack = new PaystackPop();
               paystack.newTransaction({
-                key: import.meta.env.PAYSTACK_PUBLIC_KEY, // or process.env.REACT_APP_...
+                key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY, // or process.env.REACT_APP_...
                 email: formData.email,
                 amount: orderData.amount * 100,
                 ref: orderId,
                 onSuccess: (transaction) => {
-                  alert("Payment Successful!");
+                  // alert("Payment Successful!");
+                  toast.success("Payment Successful!");
+                  setCartItems({});
                   navigate("/orders");
                 },
                 onCancel: () => {
@@ -120,8 +121,8 @@ const PlaceOrder = () => {
             }
           } catch (err) {
             console.error(err);
-            alert("Payment failed");
-            console.log(err)
+            toast.error("Payment failed");
+            // alert("Payment failed");
           }
           break;
         }
