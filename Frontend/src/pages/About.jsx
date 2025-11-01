@@ -13,25 +13,40 @@ const About = () => {
         <img className="w-full max-w-[450px]" src={assets.about_img} alt="" />
         <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600">
           <p>
-            Forever was born out of a passion for innovation and a desire to
-            revolutionize the way people shop online. Our journey began with a
-            simple idea: to provide a platform where customers can easily
-            discover, explore, and purchase a wide range of products from the
-            comfort of their homes.
+            <span>PHENZ</span> is a reflection of mood, presence, and quiet
+            confidence, created for people who don’t overthink style. PHENZ
+            makes it easy to show up as you are raw, timeless, and entirely
+            real. Every piece is built on one belief: your clothes should feel
+            like you. Not curated. Not performative. Just true.
           </p>
           <p>
-            Since our inception, we've worked tirelessly to curate a diverse
-            selection of high-quality products that cater to every taste and
-            preference. From fashion and beauty to electronics and home
-            essentials, we offer an extensive collection sourced from trusted
-            brands and suppliers.
+            Driven by community and aligned with emotion, PHENZ is built through
+            connection, not campaigns. It lives in moments, in moods, in the
+            people who wear it without needing to explain it.
           </p>
-          <b className="text-gray-800">Our Mission</b>
           <p>
-            Our mission at Forever is to empower customers with choice,
-            convenience, and confidence. We're dedicated to providing a seamless
-            shopping experience that exceeds expectations, from browsing and
-            ordering to delivery and beyond.
+            At its core, PHENZ is about effortless expression. Nothing forced.
+            Nothing fake. Just clothes that make sense — because they already
+            feel like you.
+          </p>
+          <b className="text-gray-800">The Why</b>
+          <p>
+            Phenz’s logo is an expression freedom. It combines the letter P from
+            PHENZ, symbolizing authenticity and individuality, with wings
+            inspired by the wings of Hermes. The wings represent more than just
+            speed — they embody the brand’s effortless expression, where you
+            move freely and confidently through life, unburdened by external
+            expectations. The P serves as the foundation, grounded in
+            self-awareness and authenticity, while the wings provide the freedom
+            to soar and evolve without constraints.
+          </p>
+          <p>
+            PHENZ isn’t about following trends or seeking attention; it’s about
+            staying true to yourself and expressing that truth with clarity and
+            ease. The wings reinforce this idea of flowing through life
+            naturally, rising to challenges and growing without force. The
+            minimalist design is a powerful reminder that style doesn’t have to
+            be loud or complicated, it’s about confidence in simplicity.
           </p>
         </div>
       </div>
@@ -40,16 +55,26 @@ const About = () => {
       </div>
       <div className="flex flex-col md:flex-row mb-20 text-sm">
         <div className="border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5">
-          <b>Quality Assurance:</b>
-          <p className="text-gray-600">We meticulously select and vet each product to ensure it meets our stringent quality standards.</p>
+          <b>Brand Values:</b>
+          <p className="text-gray-600">
+            Authenticity, Simplicity, Expression and Community
+          </p>
         </div>
         <div className="border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5">
-          <b>Convinience:</b>
-          <p className="text-gray-600">With our user-friendly interface and hassle-free ordering process, shopping has never been easier.</p>
+          <b>Brand Persona:</b>
+          <p className="text-gray-600">
+            Effortlessly magnetic presence. Calm, grounded, and always in tune.
+            It doesn’t chase trends or attention. PHENZ reflects those who wear
+            what feels right, not what’s expected.
+          </p>
         </div>
         <div className="border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5">
-          <b>Exceptional Customer Service:</b>
-          <p className="text-gray-600">Our team of dedicated professionals is here to assist you the way, ensuring your satisfaction is our top priority.</p>
+          <b>Brand Voice:</b>
+          <p className="text-gray-600">
+            Warm & Relatable (Like a close friend who gets you). Encouraging &
+            Uplifting (Offers reassurance and boosts confidence in one’s
+            personal style).
+          </p>
         </div>
       </div>
 

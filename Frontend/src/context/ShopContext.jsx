@@ -4,14 +4,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
   const currency = "₦";
   const delivery_fee = 10;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
 
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -45,7 +43,8 @@ const ShopContextProvider = (props) => {
       try {
         await axios.post(
           backendUrl + "/api/cart/add",
-          { itemId, size }, { withCredentials: true }
+          { itemId, size },
+          { withCredentials: true }
         );
       } catch (error) {
         console.log(error);
@@ -72,20 +71,36 @@ const ShopContextProvider = (props) => {
   };
 
   const updateQuantity = async (itemId, size, quantity) => {
-    let cartData = structuredClone(cartItems);
+    const cartData = structuredClone(cartItems);
 
-    cartData[itemId][size] = quantity;
+    // Always ensure item exists before accessing
+    if (!cartData[itemId]) {
+      cartData[itemId] = {};
+    }
+
+    if (quantity === 0) {
+      delete cartData[itemId][size];
+
+      // Clean up empty item
+      if (Object.keys(cartData[itemId]).length === 0) {
+        delete cartData[itemId];
+      }
+    } else {
+      cartData[itemId][size] = quantity;
+    }
+
     setCartItems(cartData);
 
     if (token) {
       try {
         await axios.post(
           backendUrl + "/api/cart/update",
-          { itemId, size, quantity }, { withCredentials: true }
+          { itemId, size, quantity },
+          { withCredentials: true }
         );
       } catch (error) {
-        console.log(error);
-        toast.error(error.message);
+        console.error(error);
+        toast.error(error.response?.data?.message || "Failed to update cart");
       }
     }
   };
@@ -125,7 +140,8 @@ const ShopContextProvider = (props) => {
     try {
       const response = await axios.post(
         backendUrl + "/api/cart/get",
-        {}, { withCredentials: true }
+        {},
+        { withCredentials: true }
       );
 
       if (response.data.success) {
@@ -138,33 +154,33 @@ const ShopContextProvider = (props) => {
   };
 
   const verifyUser = async () => {
-  try {
-    const res = await axios.get(backendUrl + "/api/user/verify", {
-      withCredentials: true,
-    });
-    if (res.data.success) {
-      setToken("valid"); // You can store anything to represent a logged-in state
-      getUserCart();
-    } else {
-      setToken("");
+    try {
+      const res = await axios.get(backendUrl + "/api/user/verify", {
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        setToken("valid"); // You can store anything to represent a logged-in state
+        getUserCart();
+      } else {
+        setToken("");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAuthChecked(true);
     }
-  } catch (error) {
-    console.log(error);
-  }finally {
-    setAuthChecked(true);
-  }
-};
+  };
 
   // useEffect(() => {
   //   getProductData();
   // }, []);
 
   useEffect(() => {
-  if (token === "valid") {
-    getProductData(); // fetch protected data only when cookie auth is confirmed
-    getUserCart();
-  }
-}, [token]);
+    if (token === "valid") {
+      getProductData(); // fetch protected data only when cookie auth is confirmed
+      getUserCart();
+    }
+  }, [token]);
 
   useEffect(() => {
     // if (!token && localStorage.getItem("token")) {
@@ -193,7 +209,7 @@ const ShopContextProvider = (props) => {
     token,
     setToken,
     authChecked,
-    getUserCart
+    getUserCart,
   };
 
   return (

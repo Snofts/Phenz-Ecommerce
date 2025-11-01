@@ -8,9 +8,7 @@ const Footer = () => {
         <div>
           <img src={assets.logo} className="w-32 mb-5" alt="" />
           <p className="w-full md:w-2/3 text-gray-600">
-            Lorem ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem ipsum is simply dummy text of the printing and
-            typesetting industry.
+            <span className="uppercase">PHENZ</span> is a reflection of mood, presence, and quiet confidence, created for people who don’t overthink style. PHENZ makes it easy to show up as you are raw, timeless, and entirely real. Every piece is built on one belief: your clothes should feel like you. Not curated. Not performative. Just true.
           </p>
         </div>
 
@@ -27,8 +25,8 @@ const Footer = () => {
         <div>
           <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>+2348100802096</li>
-            <li>Phenz.ng@gmail.com</li>
+            <li>+234 816 424 9316</li>
+            <li>Byphenz@gmail.com</li>
           </ul>
         </div>
       </div>
@@ -36,7 +34,7 @@ const Footer = () => {
       <div>
         <hr />
         <p className="py-5 text-sm text-center">
-          Copy right 2024@ Phenz.ng - All rights reserved
+          Copy right 2025@ Phenz.ng - All rights reserved
         </p>
       </div>
     </div>
