@@ -16,27 +16,42 @@ const port = process.env.PORT || 4000;
 connectDB();
 connectCloudinary();
 
-// === CORS: Dynamic & Secure ===
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.ADMIN_URL,
-  "http://localhost:5173",
-  "http://localhost:5174",
-].filter(Boolean);
+// === CORS: Safe + Preview-Friendly ===
+const allowedDomains = [
+  "phenz-ecommerce-frontend.vercel.app",
+  "phenz-ecommerce-admin.vercel.app",
+];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`CORS blocked: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // ✅ allow OPTIONS
-  allowedHeaders: ['Content-Type', 'Authorization'],             // ✅ explicit headers
-}));
+// Local dev URLs
+const allowedLocal = ["http://localhost:5173", "http://localhost:5174"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // allow mobile apps, Postman, etc.
+
+      const hostname = new URL(origin).hostname;
+
+      // ✅ Allow main frontend/admin and their previews
+      const isAllowed =
+        allowedDomains.some(
+          (domain) =>
+            hostname === domain ||
+            hostname.endsWith(`-${domain.split(".vercel.app")[0]}.vercel.app`)
+        ) || allowedLocal.includes(origin);
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        console.warn(`🚫 CORS blocked: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Important: raw body for Paystack webhook
 app.use(
