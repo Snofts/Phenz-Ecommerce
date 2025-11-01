@@ -23,7 +23,7 @@ app.use('/api/order/webhook/paystack', express.raw({ type: 'application/json' })
 app.use(express.json())
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || origin === process.env.FRONTEND_URL || origin === process.env.ADMIN_URL) {
+    if (!origin || origin === process.env.FRONTEND_URL || origin === process.env.ADMIN_URL || origin === 'https://phenz-ecommerce-frontend.vercel.app/' || origin === 'https://phenz-ecommerce-admin.vercel.app/') {
       callback(null, true);
     } else {
       console.warn(`CORS blocked origin: ${origin}`);
