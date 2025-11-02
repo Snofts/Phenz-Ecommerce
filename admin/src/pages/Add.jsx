@@ -18,9 +18,13 @@ const Add = () => {
   const [subCategory, setSubCategory] = useState("Topwear");
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
+   const [loading, setLoading] = useState(false); // ✅ Loader state
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (loading) return; // ✅ Prevent multiple clicks
+
+    setLoading(true);
 
     try{
       const formData = new FormData()
@@ -47,6 +51,8 @@ const Add = () => {
         setImage3(false)
         setImage4(false)
         setPrice('')
+        setSizes([]);
+        setBestseller(false);
       }else {
         toast.error(response.data.message)
       }
@@ -54,6 +60,8 @@ const Add = () => {
     } catch(error){
       console.log(error)
       toast.error(error.message)
+    }finally {
+      setLoading(false); // ✅ Always re-enable button
     }
 
   }
@@ -192,8 +200,14 @@ const Add = () => {
         <label className="cursor-pointer" htmlFor="bestseller">BestSeller</label>
       </div>
 
-      <button type="submit" className="w-28 py-3 mt-4 bg-black text-white">
-        ADD
+      <button
+        type="submit"
+        disabled={loading}
+        className={`w-28 py-3 mt-4 text-white ${
+          loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
+        }`}
+      >
+        {loading ? "Adding..." : "ADD"}
       </button>
     </form>
   );
