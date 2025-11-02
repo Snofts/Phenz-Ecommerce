@@ -264,7 +264,7 @@ const PlaceOrder = () => {
                   method === "paystack" ? "bg-green-500" : ""
                 }`}
               ></p>
-              <img className="h-5 mx-5" src={assets.paystack_logo} alt="" />
+              <img className="h-5 mx-5" src={assets.paystack} alt="" />
             </div>
             <div
               onClick={() => setMethod("cod")}
