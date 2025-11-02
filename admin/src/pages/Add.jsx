@@ -37,7 +37,7 @@ const Add = () => {
       image3 && formData.append('image3', image3)
       image4 && formData.append('image4', image4)
 
-      const response = await axios.post(import.meta.VITE_BACKEND_URL + "/api/product/add", formData, { withCredentials: true })
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/product/add", formData, { withCredentials: true })
       if(response.data.success){
         toast.success(response.data.message)
         setName('')
