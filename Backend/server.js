@@ -18,8 +18,8 @@ connectCloudinary();
 
 // === CORS: Safe + Preview-Friendly ===
 const allowedDomains = [
-  "phenz-ecommerce-frontend.vercel.app",
-  "phenz-ecommerce-admin.vercel.app",
+  "https://phenz-ecommerce-frontend.vercel.app",
+  "https://phenz-ecommerce-admin.vercel.app",
 ];
 
 // Local dev URLs
@@ -52,6 +52,12 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization", "token"],
   })
 );
+
+// ✅ Explicitly allow credentials for Safari/iOS
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 // Important: raw body for Paystack webhook
 app.use(
