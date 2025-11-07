@@ -10,7 +10,7 @@ const createToken = (id) => {
 // Helper to get cookie domain
 const getCookieDomain = () => {
   if (process.env.NODE_ENV === "production") {
-    return ".vercel.app";
+    return "vercel.app";
   }
   return undefined; // localhost
 };
@@ -36,7 +36,7 @@ const loginUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true, // ← MUST be true on HTTPS
-      sameSite: "lax",
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
       domain: getCookieDomain(),
@@ -124,7 +124,7 @@ const adminLogin = async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
         domain: getCookieDomain(),
