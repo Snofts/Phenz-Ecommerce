@@ -7,6 +7,14 @@ const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET);
 };
 
+// Helper to get cookie domain
+const getCookieDomain = () => {
+  if (process.env.NODE_ENV === "production") {
+    return ".vercel.app";
+  }
+  return undefined; // localhost
+};
+
 // Route for userLogin
 const loginUser = async (req, res) => {
   try {
@@ -31,6 +39,7 @@ const loginUser = async (req, res) => {
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
+      domain: getCookieDomain(),
     });
 
     // THEN SEND RESPONSE
@@ -90,6 +99,7 @@ const registerUser = async (req, res) => {
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
+      domain: getCookieDomain(),
     });
 
     // ONE RESPONSE
@@ -117,6 +127,7 @@ const adminLogin = async (req, res) => {
         sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
+        domain: getCookieDomain(),
       });
 
       return res.json({
@@ -141,6 +152,7 @@ const logoutUser = (req, res) => {
       secure: true,
       sameSite: "none",
       path: "/",
+      domain: getCookieDomain(),
     });
     return res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {

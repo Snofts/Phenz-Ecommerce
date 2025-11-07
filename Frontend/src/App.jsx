@@ -16,6 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Verify from "./pages/Verify";
 import axios from "axios";
 import Delivery from "./pages/Delivery";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -65,6 +66,7 @@ const App = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/delivery" element={<Delivery />} />
+        <Route path="/policy" element={<PrivacyPolicy />} />
       </Routes>
 
       <Footer />
