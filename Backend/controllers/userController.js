@@ -27,9 +27,10 @@ const loginUser = async (req, res) => {
     // SET COOKIE FIRST
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: true, // ← MUST be true on HTTPS
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
     // THEN SEND RESPONSE
@@ -85,9 +86,10 @@ const registerUser = async (req, res) => {
     // SET COOKIE
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
     // ONE RESPONSE
@@ -111,12 +113,17 @@ const adminLogin = async (req, res) => {
       // SET COOKIE
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/",
       });
 
-      return res.json({ success: true, message: "Admin login successful", token});
+      return res.json({
+        success: true,
+        message: "Admin login successful",
+        token,
+      });
     } else {
       return res.json({ success: false, message: "Invalid Credentials" });
     }
@@ -126,23 +133,20 @@ const adminLogin = async (req, res) => {
   }
 };
 
-
-
 // Logout route controller
 const logoutUser = (req, res) => {
   try {
-    res.clearCookie('token', {
+    res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: true,
+      sameSite: "none",
+      path: "/",
     });
-    return res.json({ success: true, message: 'Logged out successfully' });
+    return res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.log(error);
     return res.json({ success: false, message: error.message });
   }
 };
-
-
 
 export { loginUser, registerUser, adminLogin, logoutUser };
