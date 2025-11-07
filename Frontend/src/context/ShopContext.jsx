@@ -177,17 +177,13 @@ const ShopContextProvider = (props) => {
 
   useEffect(() => {
     if (token === "valid") {
-      getProductData(); // fetch protected data only when cookie auth is confirmed
       getUserCart();
+      verifyUser();
     }
   }, [token]);
 
   useEffect(() => {
-    // if (!token && localStorage.getItem("token")) {
-    //   setToken(localStorage.getItem("token"));
-    //   getUserCart(localStorage.getItem("token"));
-    // }
-    verifyUser();
+    getProductData();
   }, []);
 
   const value = {

@@ -19,10 +19,10 @@ const Footer = () => {
         <div>
           <p className="text-xl font-medium mb-5">COMPANY</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li onClick={() => navigate("/")}>Home</li>
-            <li onClick={() => navigate("/about")}>About us</li>
-            <li onClick={() => navigate("/delivery")}>Delivery</li>
-            <li onClick={() => navigate("/policy")}>Privacy policy</li>
+            <li onClick={() => navigate("/")} className="cursor-pointer">Home</li>
+            <li onClick={() => navigate("/about")} className="cursor-pointer">About us</li>
+            <li onClick={() => navigate("/delivery")} className="cursor-pointer">Delivery</li>
+            <li onClick={() => navigate("/policy")} className="cursor-pointer">Privacy policy</li>
           </ul>
         </div>
 
