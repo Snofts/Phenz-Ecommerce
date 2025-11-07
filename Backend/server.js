@@ -18,8 +18,8 @@ connectCloudinary();
 
 // === CORS: Safe + Preview-Friendly ===
 const allowedDomains = [
-  "https://phenz-ecommerce-frontend.vercel.app",
-  "https://phenz-ecommerce-admin.vercel.app",
+  "phenz-ecommerce-frontend.vercel.app",
+  "phenz-ecommerce-admin.vercel.app",
 ];
 
 // Local dev URLs
