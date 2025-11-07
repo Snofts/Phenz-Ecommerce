@@ -5,7 +5,6 @@ import { useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 
-
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const {
@@ -15,7 +14,7 @@ const Navbar = () => {
     setToken,
     token,
     setCartItems,
-    backendUrl
+    backendUrl,
   } = useContext(ShopContext);
 
   const logout = async () => {
@@ -67,12 +66,21 @@ const Navbar = () => {
         />
 
         <div className="group relative">
-          <img
-            onClick={() => (token ? null : navigate("/login"))}
-            className="w-5 cursor-pointer"
-            src={assets.profile_icon}
-            alt=""
-          />
+          {token ? (
+            <img
+              // onClick={() => (token ? null : navigate("/login"))}
+              className="w-5 cursor-pointer"
+              src={assets.user_online}
+              alt=""
+            />
+          ) : (
+            <img
+              onClick={() => (token ? null : navigate("/login"))}
+              className="w-5 cursor-pointer"
+              src={assets.profile_icon}
+              alt=""
+            />
+          )}
 
           {/* Dropdown */}
 

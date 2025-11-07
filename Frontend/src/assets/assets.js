@@ -74,6 +74,8 @@ import razorpay_logo from './razorpay_logo.png'
 import stripe_logo from './stripe_logo.png'
 import paystack_logo from './paystack.png'
 import cross_icon from './cross_icon.png'
+import user_online from "./user.svg"
+import delivery_banner from './delivery_banner.jpg'
 
 export const assets = {
     logo,
@@ -94,7 +96,9 @@ export const assets = {
     razorpay_logo,
     stripe_logo,
     paystack_logo,
-    cross_icon
+    cross_icon,
+    user_online,
+    delivery_banner
 }
 
 // export const products = [

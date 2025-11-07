@@ -30,3 +30,7 @@ a.active hr{
 .green-border{
     border-color: #277130;
 }
+
+.svg-green {
+  fill: #277130; /* green-700 */
+}
