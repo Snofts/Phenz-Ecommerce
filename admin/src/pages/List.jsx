@@ -12,7 +12,6 @@ const List = () => {
 
     try{
       const response = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/product/list", { withCredentials: true });
-      console.log(response.data)
     if(response.data.success){
       setList(response.data.products);
     }else {
@@ -31,7 +30,6 @@ const List = () => {
 
     try{
       const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/product/remove", {id}, { withCredentials: true });
-      console.log(response)
       if(response.data.success){
         toast.success(response.data.message)
         await fetchList();

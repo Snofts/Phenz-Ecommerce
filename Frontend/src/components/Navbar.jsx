@@ -76,7 +76,6 @@ const Navbar = () => {
               // onClick={() => (token ? null : navigate("/login"))}
               onClick={() => {
                 isTablet && setMobileMenuOpen(!mobileMenuOpen);
-                console.log("clicked", mobileMenuOpen);
               }}
               className="w-5 cursor-pointer"
               src={assets.user_online}

@@ -14,7 +14,6 @@ const Login = ({ setIsAuthenticated }) => {
         email,
         password,
       }, { withCredentials: true });
-      console.log(response.data);
       if (response.data.success) {
         toast.success("Login successful");
         setIsAuthenticated(true);

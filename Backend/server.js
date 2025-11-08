@@ -35,10 +35,10 @@ app.use(
       const vercelPreview = /\.vercel\.app$/i.test(origin);
       const renderPreview = /\.onrender\.com$/i.test(origin);
 
-      if (allowedOrigins.includes(origin) || vercelPreview || renderPreview) {
+      if (allowedDomains.includes(origin) || allowedLocal.includes(origin) || vercelPreview || renderPreview) {
         callback(null, true);
       } else {
-        console.warn("🚫 CORS blocked:", origin);
+        // console.warn("🚫 CORS blocked:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -49,10 +49,10 @@ app.use(
 );
 
 // ✅ Explicitly allow credentials for Safari/iOS
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 // Important: raw body for Paystack webhook
 app.use(
