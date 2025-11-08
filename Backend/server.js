@@ -20,7 +20,7 @@ connectCloudinary();
 const allowedDomains = [
   "phenz-ecommerce-frontend.vercel.app",
   "phenz-ecommerce-admin.vercel.app",
-  "https://phenz-adminpanel.onrender.com"
+  "https://phenz-adminpanel.onrender.com",
 ];
 
 // Local dev URLs
@@ -29,23 +29,16 @@ const allowedLocal = ["http://localhost:5173", "http://localhost:5174"];
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow mobile apps, Postman, etc.
+      if (!origin) return callback(null, true); // Allow server-to-server and Postman
 
-      const hostname = new URL(origin).hostname;
+      // Allow any Vercel preview deployment subdomain (e.g., phenz-ecommerce-admin-git-main-yourname.vercel.app)
+      const vercelPreview = /\.vercel\.app$/i.test(origin);
+      const renderPreview = /\.onrender\.com$/i.test(origin);
 
-      // ✅ Allow main frontend/admin and their previews
-      const isAllowed =
-        allowedDomains.some(
-          (domain) =>
-            hostname === domain ||
-            hostname.endsWith(`-${domain.split(".vercel.app")[0]}.vercel.app`) ||
-            hostname.endsWith(`-${domain.split(".onrender.com")[0]}.onrender.com`)
-        ) || allowedLocal.includes(origin);
-
-      if (isAllowed) {
+      if (allowedOrigins.includes(origin) || vercelPreview || renderPreview) {
         callback(null, true);
       } else {
-        console.warn(`🚫 CORS blocked: ${origin}`);
+        console.warn("🚫 CORS blocked:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
