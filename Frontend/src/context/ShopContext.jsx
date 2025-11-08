@@ -178,12 +178,12 @@ const ShopContextProvider = (props) => {
   useEffect(() => {
     if (token === "valid") {
       getUserCart();
-      verifyUser();
     }
   }, [token]);
 
   useEffect(() => {
     getProductData();
+    verifyUser();
   }, []);
 
   const value = {

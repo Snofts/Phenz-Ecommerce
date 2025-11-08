@@ -4,8 +4,12 @@ import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
+import { useMediaQuery } from "react-responsive";
 
 const Navbar = () => {
+  const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const [visible, setVisible] = useState(false);
   const {
     setShowSearch,
@@ -26,7 +30,9 @@ const Navbar = () => {
       );
       setToken("");
       setCartItems({});
+      isTablet && setMobileMenuOpen(false)
       navigate("/login");
+
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -69,6 +75,9 @@ const Navbar = () => {
           {token ? (
             <img
               // onClick={() => (token ? null : navigate("/login"))}
+              onClick={() => {isTablet && setMobileMenuOpen(!mobileMenuOpen);
+                console.log("clicked", mobileMenuOpen);}
+              }
               className="w-5 cursor-pointer"
               src={assets.user_online}
               alt=""
@@ -85,7 +94,13 @@ const Navbar = () => {
           {/* Dropdown */}
 
           {token && (
-            <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
+            <div
+              className={`group-hover:block ${
+                mobileMenuOpen
+                  ? "block"
+                  : "hidden"
+              } absolute dropdown-menu right-0 pt-4 z-20`}
+            >
               <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
                 <p className="cursor-pointer hover:text-black">My Profle</p>
                 <p
