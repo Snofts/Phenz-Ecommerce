@@ -34,7 +34,7 @@ const App = () => {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const res = await axios.post("/api/user/verify");
+        const res = await axios.get("/api/user/verify"); // Adjust the URL as needed to get instead of post
         if (res.data.success) {
           console.log("User verified:", res.data.user);
         } else {
