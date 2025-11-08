@@ -140,6 +140,7 @@ const verifyPaystackPayment = async (req, res) => {
 const allOrders = async (req, res) => {
   try {
     const orders = await orderModal.find({});
+    console.log(orders);
     res.json({ success: true, orders });
   } catch (error) {
     console.log(error);

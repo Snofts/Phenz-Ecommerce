@@ -1,16 +1,35 @@
 import axios from "axios";
 import { backendUrl } from "../App";
 import { assets } from "../assets/assets";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ setIsAuthenticated }) => {
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
     try {
       await axios.post(`${backendUrl}/api/user/admin/logout`, {}, { withCredentials: true });
       setIsAuthenticated(false);
+      navigate("/admin-login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
+
+  useEffect(() => {
+  const verifyAdmin = async () => {
+    const res = await axios.get(`${backendUrl}/api/user/admin-verify`, {
+      withCredentials: true,
+    });
+    if (!res.data.success) {
+      setIsAuthenticated(false);
+      navigate("/admin-login");
+    }
+  };
+  verifyAdmin();
+}, []);
+
 
   return (
     <div className="flex items-center py-2 px-[4%] justify-between">

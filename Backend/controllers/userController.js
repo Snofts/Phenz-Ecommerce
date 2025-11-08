@@ -33,7 +33,7 @@ const loginUser = async (req, res) => {
     const token = createToken(user._id);
 
     // SET COOKIE FIRST
-    res.cookie("token", token, {
+    res.cookie("user_token", token, {
       httpOnly: true,
       secure: true, // ← MUST be true on HTTPS
       sameSite: "None",
@@ -93,7 +93,7 @@ const registerUser = async (req, res) => {
     const token = createToken(user._id);
 
     // SET COOKIE
-    res.cookie("token", token, {
+    res.cookie("user_token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "lax",
@@ -121,7 +121,7 @@ const adminLogin = async (req, res) => {
       const token = jwt.sign(email + password, process.env.JWT_SECRET);
 
       // SET COOKIE
-      res.cookie("token", token, {
+      res.cookie("admin_token", token, {
         httpOnly: true,
         secure: true,
         sameSite: "None",
@@ -144,10 +144,10 @@ const adminLogin = async (req, res) => {
   }
 };
 
-// Logout route controller
+// User Logout route controller
 const logoutUser = (req, res) => {
   try {
-    res.clearCookie("token", {
+    res.clearCookie("user_token", {
       httpOnly: true,
       secure: true,
       sameSite: "lax",
@@ -161,4 +161,21 @@ const logoutUser = (req, res) => {
   }
 };
 
-export { loginUser, registerUser, adminLogin, logoutUser };
+// Admin Logout route controller
+const logoutAdmin = (req, res) => {
+  try {
+    res.clearCookie("admin_token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      path: "/",
+      domain: getCookieDomain(),
+    });
+    return res.json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+export { loginUser, registerUser, adminLogin, logoutUser, logoutAdmin };
