@@ -20,6 +20,7 @@ connectCloudinary();
 const allowedDomains = [
   "phenz-ecommerce-frontend.vercel.app",
   "phenz-ecommerce-admin.vercel.app",
+  "https://phenz-adminpanel.onrender.com"
 ];
 
 // Local dev URLs

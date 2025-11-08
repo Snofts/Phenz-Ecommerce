@@ -6,7 +6,6 @@ const getUserIdFromToken = (req) => {
   const token = req.cookies.user_token;
   if (!token) throw new Error("Not authenticated");
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  console.log("Decoded token id:", decoded.id); // Debug: Log the decoded token
   return decoded.id; // Make sure your token encodes { id: user._id }
 };
 
@@ -14,7 +13,6 @@ const getUserIdFromToken = (req) => {
 const addToCart = async (req, res) => {
   try {
     const userId = getUserIdFromToken(req);
-    console.log(req);
     const { itemId, size } = req.body;
 
     const userData = await userModel.findById(userId);

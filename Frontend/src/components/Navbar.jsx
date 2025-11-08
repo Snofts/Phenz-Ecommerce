@@ -30,9 +30,8 @@ const Navbar = () => {
       );
       setToken("");
       setCartItems({});
-      isTablet && setMobileMenuOpen(false)
+      isTablet && setMobileMenuOpen(false);
       navigate("/login");
-
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -75,9 +74,10 @@ const Navbar = () => {
           {token ? (
             <img
               // onClick={() => (token ? null : navigate("/login"))}
-              onClick={() => {isTablet && setMobileMenuOpen(!mobileMenuOpen);
-                console.log("clicked", mobileMenuOpen);}
-              }
+              onClick={() => {
+                isTablet && setMobileMenuOpen(!mobileMenuOpen);
+                console.log("clicked", mobileMenuOpen);
+              }}
               className="w-5 cursor-pointer"
               src={assets.user_online}
               alt=""
@@ -96,9 +96,7 @@ const Navbar = () => {
           {token && (
             <div
               className={`group-hover:block ${
-                mobileMenuOpen
-                  ? "block"
-                  : "hidden"
+                mobileMenuOpen ? "block" : "hidden"
               } absolute dropdown-menu right-0 pt-4 z-20`}
             >
               <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">

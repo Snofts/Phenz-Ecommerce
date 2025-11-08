@@ -110,6 +110,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+
 // Route for adminLogin
 const adminLogin = async (req, res) => {
   try {
