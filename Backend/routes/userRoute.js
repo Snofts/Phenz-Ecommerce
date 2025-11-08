@@ -1,5 +1,5 @@
 import express from 'express'
-import {loginUser, registerUser, adminLogin, logoutUser, logoutAdmin, userProfile} from '../controllers/userController.js';
+import {loginUser, registerUser, adminLogin, logoutUser, logoutAdmin} from '../controllers/userController.js';
 import {userCheckAuth} from '../middleware/userAuth.js';
 import adminCheckAuth from '../middleware/adminCheckAuth.js';
 
