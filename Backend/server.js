@@ -38,7 +38,8 @@ app.use(
         allowedDomains.some(
           (domain) =>
             hostname === domain ||
-            hostname.endsWith(`-${domain.split(".vercel.app")[0]}.vercel.app`)
+            hostname.endsWith(`-${domain.split(".vercel.app")[0]}.vercel.app`) ||
+            hostname.endsWith(`-${domain.split(".onrender.com")[0]}.onrender.com`)
         ) || allowedLocal.includes(origin);
 
       if (isAllowed) {
