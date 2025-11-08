@@ -54,10 +54,10 @@ app.use(
 );
 
 // ✅ Explicitly allow credentials for Safari/iOS
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 
 // Important: raw body for Paystack webhook
 app.use(
