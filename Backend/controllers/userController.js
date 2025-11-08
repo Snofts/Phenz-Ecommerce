@@ -127,7 +127,7 @@ const adminLogin = async (req, res) => {
         sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
-        domain: getCookieDomain(),
+        // domain: getCookieDomain(),
       });
 
       return res.json({
@@ -169,7 +169,7 @@ const logoutAdmin = (req, res) => {
       secure: true,
       sameSite: "None",
       path: "/",
-      domain: getCookieDomain(),
+      // domain: getCookieDomain(),
     });
     return res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
