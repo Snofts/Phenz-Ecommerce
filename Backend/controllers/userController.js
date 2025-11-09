@@ -94,7 +94,7 @@ const registerUser = async (req, res) => {
     res.cookie("user_token", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
       domain: getCookieDomain(),
@@ -123,7 +123,7 @@ const adminLogin = async (req, res) => {
       res.cookie("admin_token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "None",
+        sameSite: "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
         // domain: getCookieDomain(),
@@ -149,7 +149,7 @@ const logoutUser = (req, res) => {
     res.clearCookie("user_token", {
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
+      sameSite: "None",
       path: "/",
       domain: getCookieDomain(),
     });
@@ -166,7 +166,7 @@ const logoutAdmin = (req, res) => {
     res.clearCookie("admin_token", {
       httpOnly: true,
       secure: true,
-      sameSite: "None",
+      sameSite: "Lax",
       path: "/",
       // domain: getCookieDomain(),
     });
