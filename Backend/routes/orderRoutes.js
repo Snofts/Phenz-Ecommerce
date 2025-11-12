@@ -1,27 +1,22 @@
 import express from 'express'
 import {placeOrder, placeOrderStripe, placeOrderPaystack, verifyPaystackPayment, allOrders, userOrders, updateStatus } from '../controllers/orderController.js'
-import adminCheckAuth from '../middleware/adminCheckAuth.js';
-import adminAuth from '../middleware/adminAuth.js';
-import authUser from '../middleware/auth.js';
+import auth from '../middleware/auth.js';
 
 const orderRouter = express.Router()
 
 // Admin features
-// orderRouter.post('/list', adminCheckAuth, allOrders)
-// orderRouter.post('/status', adminCheckAuth, updateStatus)
-
-orderRouter.post('/list', adminAuth, allOrders)
-orderRouter.post('/status', adminAuth, updateStatus)
+orderRouter.post('/list', auth({ admin: true }), allOrders)
+orderRouter.post('/status', auth({ admin: true }), updateStatus)
 
 // Payment features
-orderRouter.post('/place', authUser, placeOrder)
-orderRouter.post('/stripe', authUser, placeOrderStripe)
-orderRouter.post('/paystack', authUser, placeOrderPaystack)
+orderRouter.post('/place', auth({ user: true }), placeOrder)
+orderRouter.post('/stripe', auth({ user: true }), placeOrderStripe)
+orderRouter.post('/paystack', auth({ user: true }), placeOrderPaystack)
 
 // Paystack Webhook (must be public, no auth)
 orderRouter.post('/webhook/paystack', express.raw({ type: 'application/json' }), verifyPaystackPayment);
 
 // User Feature
-orderRouter.post('/userorders', authUser, userOrders)
+orderRouter.post('/userorders', auth({ user: true }), userOrders)
 
 export default orderRouter;

@@ -4,7 +4,7 @@ import Title from "../components/Title";
 import axios from "axios";
 
 const Orders = () => {
-  const { backendUrl, token, currency } = useContext(ShopContext);
+  const { backendUrl, token, currency, api, user } = useContext(ShopContext);
 
   const [orderData, setOrderData] = useState([]);
 
@@ -14,10 +14,8 @@ const Orders = () => {
         return null;
       }
 
-      const response = await axios.post(
-        backendUrl + "/api/order/userOrders",
-        {},
-        { headers: { token } }
+      const response = await api.post(
+        "/api/order/userOrders"
       );
       if (response.data.success) {
         let allOrdersItems = [];

@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const Verify = () => {
-  const { backendUrl, token, setCartItems } = useContext(ShopContext);
+  const { backendUrl, api, user, token, setCartItems } = useContext(ShopContext);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -29,10 +29,9 @@ const Verify = () => {
         ? "/api/order/verifyPaystack"   // or /verifyStripe
         : "/api/order/verifyPaystack";  // failed payments still hit same
 
-      const { data } = await axios.post(
-        `${backendUrl}${endpoint}`,
+      const { data } = await api.post(
+        `${endpoint}`,
         { orderId, success },
-        { headers: { token } }
       );
 
       if (data.success) {

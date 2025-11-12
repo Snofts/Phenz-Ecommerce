@@ -150,7 +150,8 @@ const PrivacyPolicy = () => {
         <div className="text-center mt-16">
           <Link
             to="/"
-            className="inline-block bg-black text-white px-12 py-4 rounded-full text-lg font-bold hover:bg-gray-800 transition shadow-xl"
+            className="bg-black text-white px-16 py-3 text-sm"
+            // inline-block bg-black text-white px-12 py-4 rounded-full text-lg font-bold hover:bg-gray-800 transition shadow-xl
           >
             Back to Shopping
           </Link>

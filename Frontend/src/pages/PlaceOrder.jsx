@@ -11,13 +11,14 @@ const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
   const {
     navigate,
-    backendUrl,
     cartItems,
     token,
     setCartItems,
     getCartAmount,
     delivery_fee,
     products,
+    api,
+    user
   } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -68,10 +69,9 @@ const PlaceOrder = () => {
       switch (method) {
         // API Call for COD
         case "cod": {
-          const response = await axios.post(
-            backendUrl + "/api/order/place",
-            orderData,
-            { headers: { token } }
+          const response = await api.post(
+            "/api/order/place",
+            orderData
           );
           if (response.data.success) {
             setCartItems({});
@@ -84,16 +84,8 @@ const PlaceOrder = () => {
 
         case "paystack": {
           try {
-            const res = await axios.post( backendUrl +
-              "/api/order/paystack",
-              orderData,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`, // if using JWT
-                },
-                withCredentials: true,
-              }
+            const res = await api.post( "/api/order/paystack",
+              orderData
             );
 
             if (res.data.success) {
@@ -116,13 +108,10 @@ const PlaceOrder = () => {
                 },
               });
 
-              // Or redirect (if not using inline):
-              // window.location.href = authorization_url;
             }
           } catch (err) {
             console.error(err);
             toast.error("Payment failed");
-            // alert("Payment failed");
           }
           break;
         }
@@ -244,7 +233,7 @@ const PlaceOrder = () => {
 
           {/* PAYMENT METHOD SELCETION */}
           <div className="flex gap-3 flex-col lg:flex-row">
-            <div
+            {/* <div
               onClick={() => setMethod("stripe")}
               className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
             >
@@ -254,7 +243,7 @@ const PlaceOrder = () => {
                 }`}
               ></p>
               <img className="h-5 mx-5" src={assets.stripe_logo} alt="" />
-            </div>
+            </div> */}
             <div
               onClick={() => setMethod("paystack")}
               className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
@@ -264,9 +253,9 @@ const PlaceOrder = () => {
                   method === "paystack" ? "bg-green-500" : ""
                 }`}
               ></p>
-              <img className="h-5 mx-5" src={assets.paystack} alt="" />
+              <img className="h-5 mx-5" src={assets.paystack_logo} alt="" />
             </div>
-            <div
+            {/* <div
               onClick={() => setMethod("cod")}
               className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
             >
@@ -278,7 +267,7 @@ const PlaceOrder = () => {
               <p className="text-gray-500 text-sm font-medium mx-4">
                 CASH ON DELIVERY
               </p>
-            </div>
+            </div> */}
           </div>
           <div className="w-full text-end mt-8">
             <button

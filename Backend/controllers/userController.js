@@ -3,8 +3,10 @@ import bcrypt from "bcrypt";
 import userModel from "./../models/userModel.js";
 import jwt from "jsonwebtoken";
 
-const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET);
+const createUserToken = (id) => {
+  return jwt.sign({ id, role: "user" }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 };
 
 // Helper to get cookie domain
@@ -30,20 +32,10 @@ const loginUser = async (req, res) => {
       return res.json({ success: false, message: "Invalid Credentials" });
     }
 
-    const token = createToken(user._id);
-
-    // SET COOKIE FIRST
-    res.cookie("user_token", token, {
-      httpOnly: true,
-      secure: true, // ← MUST be true on HTTPS
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/",
-      domain: getCookieDomain(),
-    });
+    const token = createUserToken(user._id);
 
     // THEN SEND RESPONSE
-    return res.json({ success: true, message: "Login successful" });
+    return res.json({ success: true, message: "Login successful", token });
   } catch (error) {
     console.log(error);
     return res.json({ success: false, message: error.message });
@@ -88,26 +80,19 @@ const registerUser = async (req, res) => {
 
     const user = await newUser.save();
 
-    const token = createToken(user._id);
-
-    // SET COOKIE
-    res.cookie("user_token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/",
-      domain: getCookieDomain(),
-    });
+    const token = createUserToken(user._id);
 
     // ONE RESPONSE
-    return res.json({ success: true, message: "User registered successfully" });
+    return res.json({
+      success: true,
+      message: "User registered successfully",
+      token,
+    });
   } catch (error) {
     console.log(error);
     return res.json({ success: false, message: error.message });
   }
 };
-
 
 // Route for adminLogin
 const adminLogin = async (req, res) => {
@@ -117,22 +102,16 @@ const adminLogin = async (req, res) => {
       email === process.env.ADMIN_EMAIL &&
       password === process.env.ADMIN_PASSWORD
     ) {
-      const token = jwt.sign(email + password, process.env.JWT_SECRET);
-
-      // SET COOKIE
-      res.cookie("admin_token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: "/",
-        // domain: getCookieDomain(),
+      const token = createToken({
+        role: "admin",
+        email: email,
       });
 
       return res.json({
         success: true,
         message: "Admin login successful",
         token,
+        admin: { email },
       });
     } else {
       return res.json({ success: false, message: "Invalid Credentials" });
@@ -146,13 +125,6 @@ const adminLogin = async (req, res) => {
 // User Logout route controller
 const logoutUser = (req, res) => {
   try {
-    res.clearCookie("user_token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      path: "/",
-      domain: getCookieDomain(),
-    });
     return res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.log(error);
@@ -163,13 +135,6 @@ const logoutUser = (req, res) => {
 // Admin Logout route controller
 const logoutAdmin = (req, res) => {
   try {
-    res.clearCookie("admin_token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Lax",
-      path: "/",
-      // domain: getCookieDomain(),
-    });
     return res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.log(error);

@@ -18,24 +18,25 @@ const Navbar = () => {
     setToken,
     token,
     setCartItems,
-    backendUrl,
+    user,
+    logout
   } = useContext(ShopContext);
 
-  const logout = async () => {
-    try {
-      await axios.post(
-        `${backendUrl}/api/user/logout`,
-        {},
-        { withCredentials: true }
-      );
-      setToken("");
-      setCartItems({});
-      isTablet && setMobileMenuOpen(false);
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-  };
+  // const logout = async () => {
+  //   try {
+  //     await axios.post(
+  //       `${backendUrl}/api/user/logout`,
+  //       {},
+  //       { withCredentials: true }
+  //     );
+  //     setToken("");
+  //     setCartItems({});
+  //     isTablet && setMobileMenuOpen(false);
+  //     navigate("/login");
+  //   } catch (err) {
+  //     console.error("Logout failed:", err);
+  //   }
+  // };
 
   return (
     <div className="flex items-center justify-between py-5 font-medium">
@@ -106,7 +107,10 @@ const Navbar = () => {
                 >
                   Orders
                 </p>
-                <p onClick={logout} className="cursor-pointer hover:text-black">
+                <p onClick={() => 
+                  {logout()
+                  isTablet && setMobileMenuOpen(false);}
+                  } className="cursor-pointer hover:text-black">
                   Logout
                 </p>
               </div>

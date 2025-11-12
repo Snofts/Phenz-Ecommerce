@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Sign Up");
-  const { token, setToken, navigate, backendUrl, getUserCart } = useContext(ShopContext);
+  const { token, setToken, navigate, backendUrl, getUserCart, api, user } =
+    useContext(ShopContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,36 +14,38 @@ const Login = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (!email || !password || (currentState === "Sign Up" && !name)) {
+      toast.error("Please fill all fields");
+      return;
+    }
     setLoading(true); // start loading
     try {
       if (currentState === "Sign Up") {
-        const response = await axios.post(
-          backendUrl + "/api/user/register",
-          {
-            name,
-            email,
-            password,
-          },
-          { withCredentials: true }
-        );
+        const response = await api.post("/api/user/register", {
+          name,
+          email,
+          password,
+        });
         if (response.data.success) {
-          setToken("valid"); // Cookie-based session confirmed
+          const jwtToken = response.data.token; // ← REAL JWT
+          setToken(jwtToken);
+          localStorage.setItem("phenzToken", response.data.token);
           toast.success(response.data.message || "Login successful");
           navigate("/");
         } else {
           toast.error(response.data.message);
         }
       } else {
-        const response = await axios.post(
-          backendUrl + "/api/user/login",
+        const response = await api.post(
+          "/api/user/login",
           {
             email,
             password,
-          },
-          { withCredentials: true }
+          }
         );
         if (response.data.success) {
-          setToken("valid"); // Cookie-based session confirmed
+          const jwtToken = response.data.token; // ← REAL JWT
+          setToken(jwtToken);
           toast.success(response.data.message || "Login successful");
           navigate("/");
         } else {
@@ -58,10 +61,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (token === "valid") {
+    if (token) {
       navigate("/");
     }
-  }, [token]);
+  }, [token, navigate]);
 
   return (
     <form

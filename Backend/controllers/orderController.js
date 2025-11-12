@@ -11,7 +11,8 @@ const deliveryCharges = 10; // Set a fixed delivery charge, can be dynamic based
 // Placing order using COD method
 const placeOrder = async (req, res) => {
   try {
-    const { userId, items, amount, address } = req.body;
+    const userId = req.user.id; // ← FROM auth() MIDDLEWARE
+    const { items, amount, address } = req.body;
 
     const orderData = {
       userId,
@@ -41,7 +42,8 @@ const placeOrderStripe = async () => {};
 // Placing order using Paystack method
 const placeOrderPaystack = async (req, res) => {
   try {
-    const { userId, items, amount, address } = req.body;
+    const userId = req.user.id; // ← FROM auth() MIDDLEWARE
+    const { items, amount, address } = req.body;
     const { origin } = req.headers;
 
     if (!origin) {
@@ -149,7 +151,7 @@ const allOrders = async (req, res) => {
 // User Order data for frontend
 const userOrders = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = req.user.id; // ← FROM auth() MIDDLEWARE
     const orders = await orderModal.find({ userId });
     res.json({ success: true, orders });
   } catch (error) {

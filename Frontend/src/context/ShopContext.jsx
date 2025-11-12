@@ -2,7 +2,6 @@ import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-axios.defaults.withCredentials = true;
 
 export const ShopContext = createContext();
 
@@ -16,8 +15,28 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState("");
+  const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const navigate = useNavigate();
+
+  // AXIOS INSTANCE WITH JWT HEADER
+  const api = axios.create({
+    baseURL: backendUrl,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  // AUTO ADD JWT TO EVERY REQUEST
+  api.interceptors.request.use(
+    (config) => {
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
 
   const addToCart = async (itemId, size) => {
     if (!size) {
@@ -41,11 +60,7 @@ const ShopContextProvider = (props) => {
     setCartItems(cardData);
     if (token) {
       try {
-        await axios.post(
-          backendUrl + "/api/cart/add",
-          { itemId, size },
-          { withCredentials: true }
-        );
+        await api.post("/api/cart/add", { itemId, size });
       } catch (error) {
         console.log(error);
         toast.error(error.message);
@@ -93,11 +108,7 @@ const ShopContextProvider = (props) => {
 
     if (token) {
       try {
-        await axios.post(
-          backendUrl + "/api/cart/update",
-          { itemId, size, quantity },
-          { withCredentials: true }
-        );
+        await api.post("/api/cart/update", { itemId, size, quantity });
       } catch (error) {
         console.error(error);
         toast.error(error.response?.data?.message || "Failed to update cart");
@@ -125,7 +136,7 @@ const ShopContextProvider = (props) => {
 
   const getProductData = async () => {
     try {
-      const response = await axios.get(backendUrl + "/api/product/list");
+      const response = await api.get("/api/product/list");
       if (response.data.success) {
         setProducts(response.data.products);
         // toast.success(response.data.message);
@@ -138,11 +149,7 @@ const ShopContextProvider = (props) => {
 
   const getUserCart = async () => {
     try {
-      const response = await axios.post(
-        backendUrl + "/api/cart/get",
-        {},
-        { withCredentials: true }
-      );
+      const response = await api.post("/api/cart/get");
 
       if (response.data.success) {
         setCartItems(response.data.cartData);
@@ -153,38 +160,75 @@ const ShopContextProvider = (props) => {
     }
   };
 
-  const verifyUser = async () => {
+  // CHECK AUTH STATUS (NEW ERA)
+  const checkAuth = async () => {
+    // if (!token) {
+    //   setAuthChecked(true);
+    //   return;
+    // }
+
     try {
-      const res = await axios.get(backendUrl + "/api/user/verify", {
-        withCredentials: true,
-      });
+      const res = await api.get("/api/user/check-auth");
       if (res.data.success) {
-        setToken("valid"); // You can store anything to represent a logged-in state
-        getUserCart();
+        setUser(res.data.user);
+        await getUserCart();
       } else {
         setToken("");
+        setUser(null);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Auth check failed:", error);
+      setToken("");
+      setUser(null);
     } finally {
       setAuthChecked(true);
     }
   };
 
-  // useEffect(() => {
-  //   getProductData();
-  // }, []);
+  // LOGOUT
+  const logout = () => {
+    setToken("");
+    setUser(null);
+    setCartItems({});
+    localStorage.removeItem("phenzToken");
+    toast.success("Logged out");
+    navigate("/login");
+  };
+
+  // ON MOUNT
+  useEffect(() => {
+    getProductData();
+  }, []);
 
   useEffect(() => {
-    if (token === "valid") {
-      getUserCart();
+    const token = localStorage.getItem("phenzToken");
+    if (token) setToken(token);
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("phenzToken", token);
+    } else {
+      localStorage.removeItem("phenzToken");
     }
   }, [token]);
 
   useEffect(() => {
-    getProductData();
-    verifyUser();
-  }, []);
+    if (token !== "" && token !== null) {
+      checkAuth();
+    } else if (token === "") {
+      // Token loaded but empty → no user
+      setAuthChecked(true);
+    }
+  }, [token]);
+
+  // useEffect(() => {
+  //   if (token) {
+  //     checkAuth();
+  //   } else {
+  //     setAuthChecked(true);
+  //   }
+  // }, [token]);
 
   const value = {
     products,
@@ -206,6 +250,9 @@ const ShopContextProvider = (props) => {
     setToken,
     authChecked,
     getUserCart,
+    logout,
+    api,
+    user,
   };
 
   return (
