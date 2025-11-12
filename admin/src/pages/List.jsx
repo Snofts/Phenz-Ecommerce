@@ -5,13 +5,31 @@ import { currency } from "../App";
 import axios from "axios";
 import { toast } from 'react-toastify';
 
+
+// AXIOS INSTANCE — PURE BEARER (SAME AS EVERYWHERE)
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  headers: { "Content-Type": "application/json" },
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("phenzAdminToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 const List = () => {
   const [list, setList] = useState([]);
 
   const fetchList = async () => {
 
     try{
-      const response = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/product/list", { withCredentials: true });
+      const response = await api.get("/api/product/list");
     if(response.data.success){
       setList(response.data.products);
     }else {
@@ -29,7 +47,7 @@ const List = () => {
   const removeProduct = async (id) => {
 
     try{
-      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/product/remove", {id}, { withCredentials: true });
+      const response = await api.post("/api/product/remove", { id });
       if(response.data.success){
         toast.success(response.data.message)
         await fetchList();

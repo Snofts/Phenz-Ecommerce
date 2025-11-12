@@ -4,32 +4,53 @@ import { assets } from "../assets/assets";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+// AXIOS INSTANCE — PURE BEARER (SAME AS EVERYWHERE)
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  headers: { "Content-Type": "application/json" },
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("phenzAdminToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 const Navbar = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${backendUrl}/api/user/admin/logout`, {}, { withCredentials: true });
+      await api.post("/api/user/admin/logout").catch(() => {});
+      localStorage.removeItem("phenzAdminToken");
       setIsAuthenticated(false);
       navigate("/admin-login");
     } catch (error) {
       console.error("Logout failed:", error);
-    }
-  };
-
-  useEffect(() => {
-  const verifyAdmin = async () => {
-    const res = await axios.get(`${backendUrl}/api/user/admin-verify`, {
-      withCredentials: true,
-    });
-    if (!res.data.success) {
+      // Force logout anyway
+      localStorage.removeItem("phenzAdminToken");
       setIsAuthenticated(false);
       navigate("/admin-login");
     }
   };
-  verifyAdmin();
-}, []);
 
+  // useEffect(() => {
+  //   const verifyAdmin = async () => {
+  //     const res = await axios.get(`${backendUrl}/api/user/admin-verify`, {
+  //       withCredentials: true,
+  //     });
+  //     if (!res.data.success) {
+  //       setIsAuthenticated(false);
+  //       navigate("/admin-login");
+  //     }
+  //   };
+  //   verifyAdmin();
+  // }, []);
 
   return (
     <div className="flex items-center py-2 px-[4%] justify-between">

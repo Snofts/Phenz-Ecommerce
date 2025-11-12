@@ -3,10 +3,9 @@ import bcrypt from "bcrypt";
 import userModel from "./../models/userModel.js";
 import jwt from "jsonwebtoken";
 
-const createUserToken = (id) => {
-  return jwt.sign({ id, role: "user" }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+// Unified token creation
+const createToken = (payload) => {
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
 // Helper to get cookie domain
@@ -32,10 +31,18 @@ const loginUser = async (req, res) => {
       return res.json({ success: false, message: "Invalid Credentials" });
     }
 
-    const token = createUserToken(user._id);
+    const token = createToken({
+      id: user._id,
+      role: "user",
+      email: user.email,
+    });
 
     // THEN SEND RESPONSE
-    return res.json({ success: true, message: "Login successful", token });
+    return res.json({ success: true, message: "Login successful", token, user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      } });
   } catch (error) {
     console.log(error);
     return res.json({ success: false, message: error.message });
@@ -80,13 +87,22 @@ const registerUser = async (req, res) => {
 
     const user = await newUser.save();
 
-    const token = createUserToken(user._id);
+    const token = createToken({
+      id: user._id,
+      role: "user",
+      email: user.email,
+    });
 
     // ONE RESPONSE
     return res.json({
       success: true,
       message: "User registered successfully",
       token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      }
     });
   } catch (error) {
     console.log(error);

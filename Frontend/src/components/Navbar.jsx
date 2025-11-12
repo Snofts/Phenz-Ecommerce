@@ -7,6 +7,7 @@ import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 
 const Navbar = () => {
+  const isSmallMobile = useMediaQuery({ query: "(max-width: 320px)" });
   const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -41,7 +42,7 @@ const Navbar = () => {
   return (
     <div className="flex items-center justify-between py-5 font-medium">
       <Link to="/">
-        <img src={assets.logo} className="w-36" alt="" />
+        <img src={assets.logo} className={`w-36 ${isSmallMobile && "!w-25"}`} alt="" />
       </Link>
 
       <ul className="hidden sm:flex gap-5 text-sm text-gray-700">

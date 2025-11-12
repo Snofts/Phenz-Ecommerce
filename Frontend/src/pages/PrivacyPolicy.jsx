@@ -1,6 +1,7 @@
 // src/pages/PrivacyPolicy.jsx
 import React from "react";
 import { Link } from "react-router-dom";
+import Title from "../components/Title";
 
 const PrivacyPolicy = () => {
   return (
@@ -9,8 +10,8 @@ const PrivacyPolicy = () => {
         
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-black mb-4">
-            Privacy Policy
+          <h1 className="text-4xl sm:text-5xl text-black mb-4">
+            <Title text1={"Privacy"} text2={"Policy"} />
           </h1>
           <p className="text-lg text-gray-600">
             Last updated: November 07, 2025

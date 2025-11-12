@@ -61,7 +61,7 @@ const Hero = () => {
         </p>
         <a
           href="/collection"
-          className="bg-white text-black px-10 py-4 rounded-full text-lg font-semibold hover:bg-gray-200 transition transform hover:scale-105"
+          className="bg-white text-black px-10 py-4 text-lg hover:bg-gray-200 transition transform hover:scale-105"
         >
           Shop Now
         </a>

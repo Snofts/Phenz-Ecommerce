@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
+import Title from "../components/Title";
 
 const DELIVERY_RATES = {
   ibadan: { fee: 1000, days: "1-2 days", message: "Special Ibadan Rate!" },
@@ -61,8 +62,8 @@ const Delivery = () => {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold text-black mb-3">
-            Doorstep Delivery Nationwide
+          <h1 className="text-2xl sm:text-3xl text-black mb-3">
+            <Title text1={"Doorstep"} text2={"Delivery Nationwide"}/>
           </h1>
           <p className="text-lg text-gray-600">
             Pay before Delivery • Full Tracking
@@ -72,7 +73,7 @@ const Delivery = () => {
         {/* Hero */}
         <div className="mb-12 rounded-2xl overflow-hidden shadow-xl border border-gray-200">
           <img
-            src={assets.delivery_banner || "https://res.cloudinary.com/dh9hpr60s/image/upload/v1762519870/delivery-phenz.jpg"}
+            src={assets.delivery_banner}
             alt="Phenz Delivery"
             className="w-full h-64 sm:h-80 object-cover"
           />
@@ -171,14 +172,14 @@ const Delivery = () => {
             </div>
 
             <div className="mt-8 text-center text-sm text-gray-600 space-y-1">
-              <p>Full tracking • Insurance • Cash on Delivery</p>
+              <p>Full tracking • Insurance</p>
             </div>
           </div>
         )}
 
         {/* Nationwide */}
         <div className="text-center mb-16">
-          <div className="inline-block bg-black text-white px-10 py-5 rounded-full text-xl sm:text-2xl font-bold shadow-xl">
+          <div className="inline-block bg-black text-white px-10 py-5 text-xl max-sm:text-[1rem] sm:text-2xl shadow-xl">
             Doorstep to All 36 States + FCT
           </div>
         </div>
@@ -187,7 +188,7 @@ const Delivery = () => {
         <div className="text-center">
           <Link
             to="/collection"
-            className="inline-block bg-black text-white px-12 py-5 rounded-full text-xl font-bold hover:bg-gray-800 transition transform hover:scale-105 shadow-xl"
+            className="inline-block bg-black text-white px-12 py-5 max-sm:px-8 max-sm:text-[1rem] text-xl hover:bg-gray-800 transition transform hover:scale-105 shadow-xl"
           >
             Start Shopping
           </Link>

@@ -3,6 +3,23 @@ import React from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
+// AXIOS INSTANCE — PURE BEARER (SAME AS EVERYWHERE)
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  headers: { "Content-Type": "application/json" },
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("phenzAdminToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,11 +27,15 @@ const Login = ({ setIsAuthenticated }) => {
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
-      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/user/admin", {
-        email,
-        password,
-      }, { withCredentials: true });
+      const response = await api.post(
+        "/api/user/admin",
+        {
+          email,
+          password,
+        }
+      );
       if (response.data.success) {
+        localStorage.setItem("phenzAdminToken", response.data.token);
         toast.success("Login successful");
         setIsAuthenticated(true);
       } else {

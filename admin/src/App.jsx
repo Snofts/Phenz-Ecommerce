@@ -12,27 +12,58 @@ import { ToastContainer } from "react-toastify";
 export const currency = "₦";
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+// AXIOS INSTANCE — PURE BEARER TOKEN
+const api = axios.create({
+  baseURL: backendUrl,
+  headers: { "Content-Type": "application/json" },
+});
+
+// AUTO ADD BEARER TOKEN
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("phenzAdminToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
 
-  useEffect(() => {
-    const verifyAdmin = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}/api/user/admin-verify`, {
-          withCredentials: true, // important for cookies
-        });
-        setIsAuthenticated(res.data.success);
-      } catch (error) {
-        setIsAuthenticated(false);
-      } finally {
-        setAuthChecked(true);
-      }
-    };
+  const verifyAdmin = async () => {
+    const token = localStorage.getItem("phenzAdminToken");
+    if (!token) {
+      setAuthChecked(true);
+      return;
+    }
 
+    try {
+      const res = await api.get("/api/user/check-auth");
+      if (res.data.success) {
+        setIsAuthenticated(true);
+      } else {
+        localStorage.removeItem("phenzAdminToken");
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error("Admin verify failed:", error);
+      localStorage.removeItem("phenzAdminToken");
+      setIsAuthenticated(false);
+    } finally {
+      setAuthChecked(true);
+    }
+  };
+
+  useEffect(() => {
     verifyAdmin();
+    // localStorage.setItem("phenzAdminToken", );
   }, []);
 
+  
   if (!authChecked) {
     return (
       <div className="flex justify-center items-center h-screen">
