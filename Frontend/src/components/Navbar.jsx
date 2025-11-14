@@ -3,7 +3,6 @@ import { assets } from "./../assets/assets";
 import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 
 const Navbar = () => {
@@ -16,10 +15,7 @@ const Navbar = () => {
     setShowSearch,
     getCartCount,
     navigate,
-    setToken,
     token,
-    setCartItems,
-    user,
     logout
   } = useContext(ShopContext);
 

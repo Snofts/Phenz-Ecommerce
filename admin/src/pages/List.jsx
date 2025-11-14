@@ -4,6 +4,7 @@ import { useState } from "react";
 import { currency } from "../App";
 import axios from "axios";
 import { toast } from 'react-toastify';
+import { useMediaQuery } from "react-responsive";
 
 
 // AXIOS INSTANCE — PURE BEARER (SAME AS EVERYWHERE)
@@ -24,6 +25,8 @@ api.interceptors.request.use(
 );
 
 const List = () => {
+  const isMobile = useMediaQuery({query: "(max-width: 480px)"})
+
   const [list, setList] = useState([]);
 
   const fetchList = async () => {
@@ -83,7 +86,7 @@ const List = () => {
     {/* Product List */}
     {
       list.map((item, index) => (
-        <div className="grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center px-2 py-1 gap-2 border text-sm" key={index}>
+        <div className={`grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] max-md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center px-2 py-1 gap-2 border text-sm ${isMobile && "!text-[0.5rem]"}`} key={index}>
           <img className="w-12" src={item.image[0]} alt="Product Image 1" />
           <p>{item.name}</p>
           <p>{item.category}</p>
