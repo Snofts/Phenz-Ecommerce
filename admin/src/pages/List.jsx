@@ -5,6 +5,8 @@ import { currency } from "../App";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { useMediaQuery } from "react-responsive";
+import { GetProductId } from "./Update";
+import { useNavigate } from "react-router-dom";
 
 
 // AXIOS INSTANCE — PURE BEARER (SAME AS EVERYWHERE)
@@ -26,6 +28,7 @@ api.interceptors.request.use(
 
 const List = () => {
   const isMobile = useMediaQuery({query: "(max-width: 480px)"})
+  const navigate = useNavigate();
 
   const [list, setList] = useState([]);
 
@@ -65,6 +68,11 @@ const List = () => {
 
   }
 
+  const updateProduct = (id) => {
+    GetProductId(id)
+    navigate("/update")
+  }
+
   useEffect(() => {
     fetchList();
   }, []);
@@ -88,7 +96,7 @@ const List = () => {
       list.map((item, index) => (
         <div className={`grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] max-md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center px-2 py-1 gap-2 border text-sm ${isMobile && "!text-[0.5rem]"}`} key={index}>
           <img className="w-12" src={item.image[0]} alt="Product Image 1" />
-          <p>{item.name}</p>
+          <p onClick={() => updateProduct(item._id)} className="cursor-pointer">{item.name}</p>
           <p>{item.category}</p>
           <p>{currency} {item.price}</p>
           <p onClick={() => removeProduct(item._id)} className="text-right md:text-center cursor-pointer text-lg">X</p>

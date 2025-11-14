@@ -10,13 +10,14 @@ const Navbar = () => {
   const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const [visible, setVisible] = useState(false);
   const {
     setShowSearch,
     getCartCount,
     navigate,
     token,
-    logout
+    logout,
+    visible,
+    setVisible
   } = useContext(ShopContext);
 
   // const logout = async () => {
@@ -132,7 +133,7 @@ const Navbar = () => {
 
       {/* Sidebar menu for small screen */}
       <div
-        className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${
+        className={`absolute top-0 right-0 bottom-0 overflow-hidden z-20 bg-white transition-all ${
           visible ? "w-full" : "w-0"
         }`}
       >

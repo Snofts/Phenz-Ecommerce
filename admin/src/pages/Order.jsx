@@ -117,7 +117,7 @@ const Order = () => {
           All Orders ({filteredOrders.length})
         </h1>
 
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex gap-4 w-100% md:w-auto">
           <input
             type="text"
             placeholder="Search by ID, name, email..."
@@ -155,10 +155,10 @@ const Order = () => {
             key={order._id}
             className="bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-6 items-start">
+            <div className="grid grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-6 items-start">
               {/* PARCEL ICON */}
               <div className="flex justify-center">
-                <img src={assets.parcel_icon} alt="Parcel" className="w-16" />
+                <img src={assets.parcel_icon} alt="Parcel" className="w-100%" />
               </div>
 
               {/* ORDER DETAILS */}

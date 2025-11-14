@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
+import { useMediaQuery } from "react-responsive";
 
 const DELIVERY_RATES = {
   ibadan: { fee: 1000, days: "1-2 days", message: "Special Ibadan Rate!" },
@@ -29,6 +30,7 @@ const Delivery = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [deliveryInfo, setDeliveryInfo] = useState(null);
+  const isTablet = useMediaQuery({query: "(max-width: 640px)"})
 
   const allLocations = [
     { name: "Ibadan", region: "ibadan", special: true },
@@ -107,7 +109,7 @@ const Delivery = () => {
 
             {/* Dropdown */}
             {searchQuery && (
-              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl border-2 border-gray-200 max-h-64 overflow-y-auto z-20">
+              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl border-2 border-gray-200 max-h-64 overflow-y-auto z-20 -translate-y-[205%] ">
                 {filteredLocations.length > 0 ? (
                   filteredLocations.map((loc, i) => (
                     <div

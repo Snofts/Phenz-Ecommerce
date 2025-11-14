@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Collection from "./pages/collection";
@@ -16,6 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Verify from "./pages/Verify";
 import Delivery from "./pages/Delivery";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import { ShopContext } from "../src/context/ShopContext";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -28,8 +29,25 @@ const ScrollToTop = () => {
 };
 
 const App = () => {
+  const { visible } = useContext(ShopContext);
+
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden"; // disable scroll
+    } else {
+      document.body.style.overflow = "auto"; // enable scroll again
+    }
+
+    // Cleanup (important)
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [visible]);
+
   return (
-    <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+    <div
+      className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'
+    >
       <ToastContainer />
       <ScrollToTop />
       <Navbar />

@@ -8,6 +8,7 @@ import Add from "./pages/Add";
 import List from "./pages/List";
 import Order from "./pages/Order";
 import { ToastContainer } from "react-toastify";
+import { Update } from "./pages/Update";
 
 export const currency = "₦";
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -87,6 +88,7 @@ const App = () => {
                 <Route path="/add" element={<Add />} />
                 <Route path="/list" element={<List />} />
                 <Route path="/orders" element={<Order />} />
+                <Route path="/update" element={<Update />} />
               </Routes>
             </div>
           </div>

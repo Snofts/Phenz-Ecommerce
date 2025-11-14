@@ -6,13 +6,13 @@ const OurPolicy = () => {
     <div className='flex flex-col sm:flex-row justify-around gap-12 sm:gap-2 text-center py-20 text-xs sm:text-sm md:text-base text-gray-700'>
         <div>
             <img src={assets.exchange_icon} className='w-12 m-auto mb-5' alt="" />
-            <p className='font-semibold'>Easy Exchange</p>
-            <p className='text-gray-400'>We offer hassel free exchange policy</p>
+            <p className='font-semibold'>Fast & Reliable Delivery</p>
+            <p className='text-gray-400'>Get your orders delivered quickly and securely nationwide</p>
         </div>
         <div>
             <img src={assets.quality_icon} className='w-12 m-auto mb-5' alt="" />
-            <p className='font-semibold'>7 Days Return Policy</p>
-            <p className='text-gray-400'>We provide 7 days free return policy</p>
+            <p className='font-semibold'>Premium Quality Guaranteed</p>
+            <p className='text-gray-400'>We ensure top–notch quality on every product</p>
         </div>
         <div>
             <img src={assets.support_img} className='w-12 m-auto mb-5' alt="" />

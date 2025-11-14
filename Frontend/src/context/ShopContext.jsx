@@ -17,6 +17,7 @@ const ShopContextProvider = (props) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
 
   // AXIOS INSTANCE WITH JWT HEADER
@@ -253,6 +254,8 @@ const ShopContextProvider = (props) => {
     logout,
     api,
     user,
+    visible,
+    setVisible
   };
 
   return (
