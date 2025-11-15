@@ -6,32 +6,39 @@ const Hero = () => {
   const [isMuted, setIsMuted] = useState(true)
 
   // Toggle sound
-  const toggleSound = () => {
+  // const toggleSound = () => {
+  //   if (videoRef.current) {
+  //     videoRef.current.muted = !videoRef.current.muted
+  //     setIsMuted(videoRef.current.muted)
+  //   }
+  // }
+  const toggleSound = (e) => {
+    e.stopPropagation(); // ← CRITICAL: STOP BUBBLING
     if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted
-      setIsMuted(videoRef.current.muted)
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
     }
-  }
+  };
 
-  // Auto-unmute on first user interaction (optional enhancement)
-  useEffect(() => {
-    const enableAudio = () => {
-      if (videoRef.current && videoRef.current.muted) {
-        videoRef.current.muted = false
-        setIsMuted(false)
-      }
-      document.removeEventListener('click', enableAudio)
-      document.removeEventListener('touchstart', enableAudio)
-    }
+  // // Auto-unmute on first user interaction (optional enhancement)
+  // useEffect(() => {
+  //   const enableAudio = () => {
+  //     if (videoRef.current && videoRef.current.muted) {
+  //       videoRef.current.muted = false
+  //       setIsMuted(false)
+  //     }
+  //     document.removeEventListener('click', enableAudio)
+  //     document.removeEventListener('touchstart', enableAudio)
+  //   }
 
-    document.addEventListener('click', enableAudio)
-    document.addEventListener('touchstart', enableAudio)
+  //   document.addEventListener('click', enableAudio)
+  //   document.addEventListener('touchstart', enableAudio)
 
-    return () => {
-      document.removeEventListener('click', enableAudio)
-      document.removeEventListener('touchstart', enableAudio)
-    }
-  }, [])
+  //   return () => {
+  //     document.removeEventListener('click', enableAudio)
+  //     document.removeEventListener('touchstart', enableAudio)
+  //   }
+  // }, [])
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
