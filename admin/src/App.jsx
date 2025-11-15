@@ -88,7 +88,7 @@ const App = () => {
                 <Route path="/add" element={<Add />} />
                 <Route path="/list" element={<List />} />
                 <Route path="/orders" element={<Order />} />
-                <Route path="/update" element={<Update />} />
+                <Route path="/update/:id" element={<Update />} />
               </Routes>
             </div>
           </div>

@@ -3,34 +3,45 @@ import { assets } from "../assets/assets";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-// AXIOS INSTANCE — PURE BEARER (SAME AS APP.JS)
+// 1. For JSON requests (list, single, remove)
+const apiJson = axios.create({
+  baseURL: backendUrl,
+  headers: { "Content-Type": "application/json" },
+});
+
+// 2. For file uploads (add, update)
 const api = axios.create({
   baseURL: backendUrl,
   headers: { "Content-Type": "multipart/form-data" },
 });
 
-// AUTO ADD BEARER TOKEN
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("phenzAdminToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Add token to both
+[apiJson, api].forEach((api) => {
+  api.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("phenzAdminToken");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+});
 
-
-const GetProductId = (id) => {
-    const ProductId = id;
-}
+// const GetProductId = (id) => {
+//     const ProductId = id;
+//     return ProductId;
+// }
 
 const Update = () => {
-    // const [productId, setProductId] = useState("")
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [image1, setImage1] = useState(false);
   const [image2, setImage2] = useState(false);
   const [image3, setImage3] = useState(false);
@@ -44,15 +55,53 @@ const Update = () => {
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [loading, setLoading] = useState(false); // ✅ Loader state
+  const [fetching, setFetching] = useState(true); // For loading product
+
+  // Fetch product on mount
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setFetching(true);
+        const res = await apiJson.post("/api/product/single", { productId: id });
+        if (res.data.success) {
+          const p = res.data.product;
+
+          setName(p.name);
+          setDescription(p.description);
+          setPrice(p.price);
+          setCategory(p.category);
+          setSubCategory(p.subCategory);
+          setBestseller(p.bestseller);
+          setSizes(p.sizes || []);
+
+          // Store existing image URLs for preview (we'll keep them unless replaced)
+          setImage1(p.image[0] || false);
+          setImage2(p.image[1] || false);
+          setImage3(p.image[2] || false);
+          setImage4(p.image[3] || false);
+        } else {
+          toast.error("Product not found");
+        }
+      } catch (error) {
+        toast.error("Failed to load product");
+        console.error(error);
+      } finally {
+        setFetching(false);
+      }
+    };
+
+    if (id) fetchProduct();
+  }, [id]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    if (loading) return; // ✅ Prevent multiple clicks
+    if (loading) return;
 
     setLoading(true);
-
     try {
       const formData = new FormData();
+      formData.append("id", id); // Critical: send product ID
+
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
@@ -61,34 +110,40 @@ const Update = () => {
       formData.append("bestseller", bestseller);
       formData.append("sizes", JSON.stringify(sizes));
 
-      image1 && formData.append("image1", image1);
-      image2 && formData.append("image2", image2);
-      image3 && formData.append("image3", image3);
-      image4 && formData.append("image4", image4);
+      // Only append new files if user selected them
+      image1 && typeof image1 === "object" && formData.append("image1", image1);
+      image2 && typeof image2 === "object" && formData.append("image2", image2);
+      image3 && typeof image3 === "object" && formData.append("image3", image3);
+      image4 && typeof image4 === "object" && formData.append("image4", image4);
 
-      const response = await api.post("/api/product/add", formData);
+      const response = await api.put("/api/product/update", formData);
+      // Use PUT to match REST convention
 
       if (response.data.success) {
         toast.success(response.data.message);
-        setName("");
-        setDescription("");
-        setImage1(false);
-        setImage2(false);
-        setImage3(false);
-        setImage4(false);
-        setPrice("");
-        setSizes([]);
-        setBestseller(false);
+        // Optionally refetch or redirect
+        navigate("/list")
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     } finally {
-      setLoading(false); // ✅ Always re-enable button
+      setLoading(false);
     }
   };
+
+  // Helper: show preview (URL or File)
+  const getImageSrc = (img) => {
+    if (!img) return assets.upload_area;
+    if (typeof img === "string") return img; // existing URL
+    return URL.createObjectURL(img); // new file
+  };
+
+  if (fetching) {
+    return <div className="text-center py-10">Loading product...</div>;
+  }
 
   return (
     <form
@@ -98,58 +153,26 @@ const Update = () => {
       <div>
         <p className="mb-2">Upload Image</p>
         <div className="flex gap-2">
-          <label htmlFor="image1">
-            <img
-              className="w-20"
-              src={!image1 ? assets.upload_area : URL.createObjectURL(image1)}
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage1(e.target.files[0])}
-              type="file"
-              id="image1"
-              hidden
-            />
-          </label>
-          <label htmlFor="image2">
-            <img
-              className="w-20"
-              src={!image2 ? assets.upload_area : URL.createObjectURL(image2)}
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage2(e.target.files[0])}
-              type="file"
-              id="image2"
-              hidden
-            />
-          </label>
-          <label htmlFor="image3">
-            <img
-              className="w-20"
-              src={!image3 ? assets.upload_area : URL.createObjectURL(image3)}
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage3(e.target.files[0])}
-              type="file"
-              id="image3"
-              hidden
-            />
-          </label>
-          <label htmlFor="image4">
-            <img
-              className="w-20"
-              src={!image4 ? assets.upload_area : URL.createObjectURL(image4)}
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage4(e.target.files[0])}
-              type="file"
-              id="image4"
-              hidden
-            />
-          </label>
+          {[1, 2, 3, 4].map((num) => {
+      const img = eval(`image${num}`);
+      const setImg = eval(`setImage${num}`);
+      return (
+        <label key={num} htmlFor={`image${num}`}>
+          <img
+            className="w-20 h-20 object-cover rounded border"
+            src={getImageSrc(img)}
+            alt={`Product image ${num}`}
+          />
+          <input
+            onChange={(e) => setImg(e.target.files[0] || false)}
+            type="file"
+            id={`image${num}`}
+            hidden
+            accept="image/*"
+          />
+        </label>
+      );
+    })}
         </div>
       </div>
       <div className="w-full">
@@ -323,4 +346,4 @@ const Update = () => {
   );
 };
 
-export {GetProductId, Update};
+export { Update };

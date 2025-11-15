@@ -5,7 +5,6 @@ import { currency } from "../App";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { useMediaQuery } from "react-responsive";
-import { GetProductId } from "./Update";
 import { useNavigate } from "react-router-dom";
 
 
@@ -69,8 +68,7 @@ const List = () => {
   }
 
   const updateProduct = (id) => {
-    GetProductId(id)
-    navigate("/update")
+    navigate(`/update/${id}`);
   }
 
   useEffect(() => {
