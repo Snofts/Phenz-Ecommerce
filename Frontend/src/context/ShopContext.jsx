@@ -1,15 +1,58 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const ShopContext = createContext();
 
+const DELIVERY_RATES = {
+  ibadan: { fee: 1000, days: "1-2 days", message: "Special Ibadan Rate!" },
+  southwest: { fee: 5000, days: "2-3 days" },
+  southeast: { fee: 5000, days: "3-4 days" },
+  southsouth: { fee: 2800, days: "3-5 days" },
+  northcentral: { fee: 3000, days: "4-6 days" },
+  northwest: { fee: 3500, days: "5-7 days" },
+  northeast: { fee: 4000, days: "6-8 days" },
+};
+
+const REGIONS = {
+  southwest: {
+    name: "South West",
+    states: ["lagos", "ogun", "oyo", "osun", "ondo", "ekiti"],
+  },
+  southeast: {
+    name: "South East",
+    states: ["abia", "anambra", "ebonyi", "enugu", "imo"],
+  },
+  southsouth: {
+    name: "South South",
+    states: ["akwa Ibom", "bayelsa", "cross River", "delta", "edo", "rivers"],
+  },
+  northcentral: {
+    name: "North Central",
+    states: ["benue", "kogi", "kwara", "nasarawa", "niger", "plateau", "fct"],
+  },
+  northwest: {
+    name: "North West",
+    states: [
+      "jigawa",
+      "kaduna",
+      "kano",
+      "katsina",
+      "kebbi",
+      "sokoto",
+      "zamfara",
+    ],
+  },
+  northeast: {
+    name: "North East",
+    states: ["adamawa", "bauchi", "borno", "gombe", "taraba", "yobe"],
+  },
+};
+
 const ShopContextProvider = (props) => {
   const currency = "₦";
-  const delivery_fee = 10;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
@@ -18,7 +61,12 @@ const ShopContextProvider = (props) => {
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [selectedState, setSelectedState] = useState("");
+  const [ibadanFee, setIbadanFee] = useState("");
+  const [deliveryFee, setDeliveryFee] = useState(0)
   const navigate = useNavigate();
+
+  //  const delivery_fee = 10;
 
   // AXIOS INSTANCE WITH JWT HEADER
   const api = axios.create({
@@ -223,13 +271,39 @@ const ShopContextProvider = (props) => {
     }
   }, [token]);
 
-  // useEffect(() => {
-  //   if (token) {
-  //     checkAuth();
-  //   } else {
-  //     setAuthChecked(true);
-  //   }
-  // }, [token]);
+  // Find region from state
+  const getRegionFromState = (state) => {
+    if (state === "Ibadan") return "ibadan";
+    for (const [region, data] of Object.entries(REGIONS)) {
+      if (data.states.includes(state)) {
+        return region;
+      }
+    }
+    return null;
+  };
+
+  // Get delivery fee
+  const getDeliveryFee = () => {
+    if (!selectedState) return 0;
+    const region = getRegionFromState(selectedState);
+    return DELIVERY_RATES[region]?.fee || 0;
+  };
+
+  // console.log(selectedState)
+
+  // Get full delivery info
+  const getDeliveryInfo = () => {
+  if (!selectedState) return {};
+  const region = getRegionFromState(selectedState);
+  return DELIVERY_RATES[region] || {};
+};
+
+ // FINAL DELIVERY FEE LOGIC
+const delivery_fee = useMemo(() => {
+  if (ibadanFee === "ibadan") return 1000;
+  if (selectedState) return getDeliveryFee();
+  return 0;
+}, [ibadanFee, selectedState]);
 
   const value = {
     products,
@@ -255,7 +329,13 @@ const ShopContextProvider = (props) => {
     api,
     user,
     visible,
-    setVisible
+    setVisible,
+    selectedState,
+    setIbadanFee,
+    setSelectedState,
+    getDeliveryFee,
+    getDeliveryInfo,
+    deliveryFee
   };
 
   return (

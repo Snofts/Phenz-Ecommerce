@@ -8,7 +8,7 @@ import axios from "axios";
 import PaystackPop from "@paystack/inline-js";
 
 const PlaceOrder = () => {
-  const [method, setMethod] = useState("cod");
+  const [method, setMethod] = useState("paystack");
   const {
     navigate,
     cartItems,
@@ -18,7 +18,9 @@ const PlaceOrder = () => {
     delivery_fee,
     products,
     api,
-    user
+    setSelectedState,
+    setIbadanFee,
+    deliveryFee
   } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -62,7 +64,7 @@ const PlaceOrder = () => {
       let orderData = {
         address: formData,
         items: orderItems,
-        amount: getCartAmount() + delivery_fee,
+        amount: getCartAmount() + deliveryFee,
       };
 
 
@@ -175,7 +177,10 @@ const PlaceOrder = () => {
         <div className="flex gap-3">
           <input
             required
-            onChange={onChangeHandler}
+            onChange={(e) => {
+              onChangeHandler(e);           // Pass full event
+              setIbadanFee(e.target.value.toLowerCase());
+            }}
             name="city"
             value={formData.city}
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
@@ -184,7 +189,10 @@ const PlaceOrder = () => {
           />
           <input
             required
-            onChange={onChangeHandler}
+            onChange={(e) => {
+              onChangeHandler(e);           // Pass full event
+              setSelectedState(e.target.value.toLowerCase());
+            }}
             name="state"
             value={formData.state}
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
@@ -225,7 +233,7 @@ const PlaceOrder = () => {
 
       {/* Right side */}
       <div className="mt-8">
-        <div className="mt-8 min-w-80">
+        <div className="mt-8 min-w-80 max-sm:min-w-60">
           <CartTotal />
         </div>
         <div className="mt-12">
@@ -253,7 +261,7 @@ const PlaceOrder = () => {
                   method === "paystack" ? "bg-green-500" : ""
                 }`}
               ></p>
-              <img className="h-5 mx-5" src={assets.paystack_logo} alt="" />
+              <img className="h-6 mx-5 w-20" src={assets.paystack_logo} alt="" />
             </div>
             {/* <div
               onClick={() => setMethod("cod")}
