@@ -39,68 +39,52 @@ const placeOrder = async (req, res) => {
 // Placing order using Stripe method
 const placeOrderStripe = async () => {};
 
-// Placing order using Paystack method
+// 1. INITIATE PAYSTACK (DO NOT CREATE FINAL ORDER)
 const placeOrderPaystack = async (req, res) => {
   try {
-    const userId = req.user.id; // ← FROM auth() MIDDLEWARE
+    const userId = req.user.id;
     const { items, amount, address } = req.body;
-    const { origin } = req.headers;
 
-    if (!origin) {
-      return res.json({ success: false, message: "Origin header is required" });
-    }
-
-
-    const orderData = {
+    // Create PENDING order
+    const pendingOrder = new orderModal({
       userId,
       items,
       amount,
       address,
-      deliveryCharges,
       paymentMethod: "Paystack",
       payment: false,
+      status: "pending",
+      paystackRef: `phenz_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       date: Date.now(),
-    };
+    });
 
-    const newOrder = new orderModal(orderData);
-    await newOrder.save();
+    await pendingOrder.save();
 
-
-    // Clear cart
-    await userModel.findByIdAndUpdate(userId, { cartData: {} });
-
-    // === INITIALIZE PAYSTACK ===
+    // Initialize Paystack
     const transaction = await paystackClient.transaction.initialize({
       email: address.email,
-      amount: amount * 100, // in kobo
-      currency: "NGN",
-      reference: newOrder._id.toString(),
-      callback_url: `${origin}/verify-paystack`,
+      amount: amount * 100,
+      reference: pendingOrder.paystackRef,
+      callback_url: `${req.headers.origin}/orders`, // redirect after payment
       metadata: {
-        order_id: newOrder._id.toString(),
+        order_id: pendingOrder._id.toString(),
         user_id: userId,
-        delivery_fee: deliveryCharges,
       },
     });
 
     res.json({
       success: true,
       authorization_url: transaction.data.authorization_url,
-      orderId: newOrder._id,
-      totalAmount: amount
+      reference: pendingOrder.paystackRef,
     });
 
-    
   } catch (error) {
     console.error("Paystack Init Error:", error);
     res.json({ success: false, message: error.message });
   }
 };
 
-
-
-
-// Verify Paystack Payment via Webhook
+// 2. WEBHOOK — THIS IS YOUR SECURITY GATE
 const verifyPaystackPayment = async (req, res) => {
   try {
     const hash = crypto
@@ -115,22 +99,42 @@ const verifyPaystackPayment = async (req, res) => {
     const event = req.body;
 
     if (event.event === 'charge.success') {
-      const reference = event.data.reference;
-      const order = await orderModal.findById(reference);
+      const ref = event.data.reference;
+      const order = await orderModal.findOne({ paystackRef: ref });
 
       if (order && !order.payment) {
         order.payment = true;
-        order.status = 'Paid';
+        order.status = "paid";
         await order.save();
 
-        // Optional: send email, trigger fulfillment, etc.
+        // CLEAR USER CART
+        await userModel.findByIdAndUpdate(order.userId, { cartData: {} });
       }
     }
 
-    res.sendStatus(200); // Acknowledge receipt
+    res.sendStatus(200);
   } catch (error) {
     console.error("Webhook Error:", error);
     res.sendStatus(500);
+  }
+};
+
+// CANCEL ORDER WHEN USER ABORTS PAYMENT
+const cancelOrderPayment = async (req, res) => {
+  try {
+    const { reference } = req.body;
+
+    const order = await orderModal.findOne({ paystackRef: reference });
+
+    if (order && !order.payment) {
+      order.payment = false
+      order.status = "Cancelled";
+      await order.save();
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -180,4 +184,5 @@ export {
   allOrders,
   userOrders,
   updateStatus,
+  cancelOrderPayment
 };

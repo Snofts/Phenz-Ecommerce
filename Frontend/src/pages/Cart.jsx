@@ -94,7 +94,7 @@ const Cart = () => {
       </div>
       <div className="flex justify-end my-20">
         <div className="w-full sm:w-[450px]">
-          <CartTotal />
+          <CartTotal deliveryTag={"hidden"} />
           <div className="w-full text-end">
             <button
               onClick={() => {

@@ -9,6 +9,12 @@ const orderSchema = new mongoose.Schema({
     paymentMethod: {type: String, required:true},
     payment: {type: Boolean, required:true, default: false},
     date: {type: Number, required:true},
+
+    paystackRef: {
+        type: String,
+        unique: true,
+        sparse: true   // ← CRITICAL: allows COD orders to exist without ref
+    },
 })
 
 const orderModal = mongoose.models.order || mongoose.model('order', orderSchema)

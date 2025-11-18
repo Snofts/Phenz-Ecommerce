@@ -1,5 +1,5 @@
 import express from 'express'
-import {placeOrder, placeOrderStripe, placeOrderPaystack, verifyPaystackPayment, allOrders, userOrders, updateStatus } from '../controllers/orderController.js'
+import {placeOrder, placeOrderStripe, placeOrderPaystack, verifyPaystackPayment, allOrders, userOrders, updateStatus, cancelOrderPayment } from '../controllers/orderController.js'
 import auth from '../middleware/auth.js';
 
 const orderRouter = express.Router()
@@ -12,6 +12,7 @@ orderRouter.post('/status', auth({ admin: true }), updateStatus)
 orderRouter.post('/place', auth({ user: true }), placeOrder)
 orderRouter.post('/stripe', auth({ user: true }), placeOrderStripe)
 orderRouter.post('/paystack', auth({ user: true }), placeOrderPaystack)
+orderRouter.post('/cancel', cancelOrderPayment);
 
 // Paystack Webhook (must be public, no auth)
 orderRouter.post('/webhook/paystack', express.raw({ type: 'application/json' }), verifyPaystackPayment);

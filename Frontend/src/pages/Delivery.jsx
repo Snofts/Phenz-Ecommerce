@@ -5,40 +5,62 @@ import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 
+// const DELIVERY_RATES = {
+//   ibadan: { fee: 1000, days: "1-2 days", message: "Special Ibadan Rate!" },
+//   southwest: { fee: 5000, days: "2-3 days" },
+//   southeast: { fee: 5000, days: "3-4 days" },
+//   southsouth: { fee: 2800, days: "3-5 days" },
+//   northcentral: { fee: 3000, days: "4-6 days" },
+//   northwest: { fee: 3500, days: "5-7 days" },
+//   northeast: { fee: 4000, days: "6-8 days" },
+// };
+
+// const REGIONS = {
+//   southwest: {
+//     name: "South West",
+//     states: ["Lagos", "Ogun", "Oyo", "Osun", "Ondo", "Ekiti"],
+//   },
+//   southeast: {
+//     name: "South East",
+//     states: ["Abia", "Anambra", "Ebonyi", "Enugu", "Imo"],
+//   },
+//   southsouth: {
+//     name: "South South",
+//     states: ["Akwa Ibom", "Bayelsa", "Cross River", "Delta", "Edo", "Rivers"],
+//   },
+//   northcentral: {
+//     name: "North Central",
+//     states: ["Benue", "Kogi", "Kwara", "Nasarawa", "Niger", "Plateau", "FCT"],
+//   },
+//   northwest: {
+//     name: "North West",
+//     states: ["Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Sokoto", "Zamfara"],
+//   },
+//   northeast: {
+//     name: "North East",
+//     states: ["Adamawa", "Bauchi", "Borno", "Gombe", "Taraba", "Yobe"],
+//   },
+// };
+
 const DELIVERY_RATES = {
   ibadan: { fee: 1000, days: "1-2 days", message: "Special Ibadan Rate!" },
-  southwest: { fee: 5000, days: "2-3 days" },
-  southeast: { fee: 5000, days: "3-4 days" },
-  southsouth: { fee: 2800, days: "3-5 days" },
-  northcentral: { fee: 3000, days: "4-6 days" },
-  northwest: { fee: 3500, days: "5-7 days" },
-  northeast: { fee: 4000, days: "6-8 days" },
+  zone1: { fee: 5000, days: "2-3 days" },
+  zone1one2: { fee: 7000, days: "3-4 days" },
+  zone3: { fee: 10000, days: "3-5 days" },
 };
 
 const REGIONS = {
-  southwest: {
-    name: "South West",
-    states: ["Lagos", "Ogun", "Oyo", "Osun", "Ondo", "Ekiti"],
+  zone1: {
+    name: "Zone 1",
+    states: ["lagos", "ogun", "oyo", "osun", "ondo", "ekiti"],
   },
-  southeast: {
-    name: "South East",
-    states: ["Abia", "Anambra", "Ebonyi", "Enugu", "Imo"],
+  zone2: {
+    name: "Zone 2",
+    states: ["abia", "adamawa", "anambra", "ebonyi", "enugu", "imo", "akwa ibom", "bayelsa", "cross river", "rivers", "delta", "edo"],
   },
-  southsouth: {
-    name: "South South",
-    states: ["Akwa Ibom", "Bayelsa", "Cross River", "Delta", "Edo", "Rivers"],
-  },
-  northcentral: {
-    name: "North Central",
-    states: ["Benue", "Kogi", "Kwara", "Nasarawa", "Niger", "Plateau", "FCT"],
-  },
-  northwest: {
-    name: "North West",
-    states: ["Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Sokoto", "Zamfara"],
-  },
-  northeast: {
-    name: "North East",
-    states: ["Adamawa", "Bauchi", "Borno", "Gombe", "Taraba", "Yobe"],
+  zone3: {
+    name: "Zone 3",
+    states: ["benue", "kogi", "taraba", "yobe", "gombe", "bauchi", "kwara", "nasarawa", "niger", "bornu", "plateau", "fct", "jigsaw", "kaduna", "kano", "katsina", "kebbi", "sokoto", "zamfara"],
   },
 };
 
@@ -110,7 +132,7 @@ const Delivery = () => {
               <span className="text-2xl sm:text-3xl hidden sm:block">Search</span>
               <input
                 type="text"
-                placeholder="Search city/state (e.g. Ibadan, Lagos...)"
+                placeholder="Search by state (e.g. Oyo, Lagos...)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-3 sm:py-4 text-base sm:text-lg border-2 border-gray-300 rounded-xl focus:border-black focus:outline-none transition"

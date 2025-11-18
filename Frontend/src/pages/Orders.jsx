@@ -3,10 +3,20 @@ import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import axios from "axios";
 
+const statusStyles = {
+  "Order Placed": "bg-blue-500",
+  Packing: "bg-yellow-500",
+  Shipped: "bg-purple-500",
+  "Out for delivery": "bg-orange-500",
+  Delivered: "bg-green-500",
+  Cancelled: "bg-red-600",
+};
+
 const Orders = () => {
-  const { backendUrl, token, currency, api, user } = useContext(ShopContext);
+  const { backendUrl, token, currency, api, user, deliveryFee } = useContext(ShopContext);
 
   const [orderData, setOrderData] = useState([]);
+
 
   const loadOrderData = async () => {
     try {
@@ -57,7 +67,7 @@ const Orders = () => {
                 <p className="sm:text-base font-medium">{item.name}</p>
                 <div className="flex items-center mt-1 gap-3 text-base text-gray-700">
                   <p>
-                    {currency} {item.price}
+                    {currency} {item.price + deliveryFee}
                   </p>
                   <p>Quantity : {item.quantity}</p>
                   <p>Size : {item.size}</p>
@@ -78,7 +88,7 @@ const Orders = () => {
             </div>
             <div className="md:w-1/2 flex justify-between">
               <div className="flex items-center gap-2">
-                <p className="min-w-2 h-2 rounded-full bg-green-500"></p>
+                <p className={`min-w-2 h-2 rounded-full ${statusStyles[item.status] || "bg-gray-500"}`}></p>
                 <p className="text-sm md:text-base">{item.status}</p>
               </div>
               <button onClick={loadOrderData} className="border px-4 py-2 text-sm font-medium rounded-sm">

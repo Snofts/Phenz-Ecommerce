@@ -9,6 +9,8 @@ import PaystackPop from "@paystack/inline-js";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("paystack");
+  const [isLoading, setIsLoading] = useState(false); // ADD THIS
+  const [buttonText, setButtonText] = useState("PLACE ORDER"); // ADD THIS
   const {
     navigate,
     cartItems,
@@ -20,7 +22,8 @@ const PlaceOrder = () => {
     api,
     setSelectedState,
     setIbadanFee,
-    deliveryFee
+    deliveryFee,
+    setDeliveryFee
   } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -43,6 +46,21 @@ const PlaceOrder = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    // PREVENT DOUBLE CLICK
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setButtonText("Please wait...");
+
+    console.log(deliveryFee);
+
+    if (deliveryFee === 0) {
+      toast.error("Incorrect Delivery Information");
+      setIsLoading(false);
+      setButtonText("PLACE ORDER");
+      return;
+    }
+
     try {
       let orderItems = [];
 
@@ -67,14 +85,10 @@ const PlaceOrder = () => {
         amount: getCartAmount() + deliveryFee,
       };
 
-
       switch (method) {
         // API Call for COD
         case "cod": {
-          const response = await api.post(
-            "/api/order/place",
-            orderData
-          );
+          const response = await api.post("/api/order/place", orderData);
           if (response.data.success) {
             setCartItems({});
             navigate("/orders");
@@ -86,34 +100,47 @@ const PlaceOrder = () => {
 
         case "paystack": {
           try {
-            const res = await api.post( "/api/order/paystack",
-              orderData
-            );
+            const res = await api.post("/api/order/paystack", orderData);
 
             if (res.data.success) {
-              const { authorization_url, orderId } = res.data;
+              console.log(res.data);
+              const { authorization_url, reference } = res.data;
 
               const paystack = new PaystackPop();
               paystack.newTransaction({
                 key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY, // or process.env.REACT_APP_...
-                email: formData.email,
+                email: formData.email.trim(),
                 amount: orderData.amount * 100,
-                ref: orderId,
-                onSuccess: (transaction) => {
+                ref: reference,
+                onSuccess: () => {
                   // alert("Payment Successful!");
                   toast.success("Payment Successful!");
                   setCartItems({});
+                  setIsLoading(true); // Keep disabled
                   navigate("/orders");
+                  setDeliveryFee(0)
                 },
-                onCancel: () => {
+                onCancel: async () => {
                   alert("Payment cancelled");
+                  setButtonText("PLACE ORDER");
+                  setIsLoading(false);
+                  try {
+                    // CALL BACKEND TO MARK ORDER AS CANCELLED
+                    await api.post("/api/order/cancel", { reference });
+                  } catch (err) {
+                    console.log("Failed to cancel order on server");
+                  }
+                },
+                onClose: () => {
+                  setButtonText("PLACE ORDER");
+                  setIsLoading(false);
                 },
               });
-
             }
           } catch (err) {
             console.error(err);
             toast.error("Payment failed");
+            console.log(err);
           }
           break;
         }
@@ -135,6 +162,9 @@ const PlaceOrder = () => {
       <div className="flex flex-col gap-5 w-full sm:max-w-[480px]">
         <div className="text-xl sm:text-2xl my-3">
           <Title text1={"DELIVERY"} text2={"INFORMATION"} />
+        </div>
+        <div>
+          <p>NT: Inputing your delivery information updates the shipping fee.</p>
         </div>
         <div className="flex gap-3">
           <input
@@ -178,7 +208,7 @@ const PlaceOrder = () => {
           <input
             required
             onChange={(e) => {
-              onChangeHandler(e);           // Pass full event
+              onChangeHandler(e); // Pass full event
               setIbadanFee(e.target.value.toLowerCase());
             }}
             name="city"
@@ -190,7 +220,7 @@ const PlaceOrder = () => {
           <input
             required
             onChange={(e) => {
-              onChangeHandler(e);           // Pass full event
+              onChangeHandler(e); // Pass full event
               setSelectedState(e.target.value.toLowerCase());
             }}
             name="state"
@@ -234,7 +264,7 @@ const PlaceOrder = () => {
       {/* Right side */}
       <div className="mt-8">
         <div className="mt-8 min-w-80 max-sm:min-w-60">
-          <CartTotal />
+          <CartTotal deliveryTag={"visible"} />
         </div>
         <div className="mt-12">
           <Title text1={"PAYMENT"} text2={"METHOD"} />
@@ -261,7 +291,11 @@ const PlaceOrder = () => {
                   method === "paystack" ? "bg-green-500" : ""
                 }`}
               ></p>
-              <img className="h-6 mx-5 w-20" src={assets.paystack_logo} alt="" />
+              <img
+                className="h-6 mx-5 w-20"
+                src={assets.paystack_logo}
+                alt=""
+              />
             </div>
             {/* <div
               onClick={() => setMethod("cod")}
@@ -280,9 +314,10 @@ const PlaceOrder = () => {
           <div className="w-full text-end mt-8">
             <button
               type="submit"
+              disabled={isLoading}
               className="bg-black text-white px-16 py-3 text-sm"
             >
-              PLACE ORDER
+              {buttonText}
             </button>
           </div>
         </div>

@@ -5,48 +5,26 @@ import axios from "axios";
 
 export const ShopContext = createContext();
 
+
 const DELIVERY_RATES = {
   ibadan: { fee: 1000, days: "1-2 days", message: "Special Ibadan Rate!" },
-  southwest: { fee: 5000, days: "2-3 days" },
-  southeast: { fee: 5000, days: "3-4 days" },
-  southsouth: { fee: 2800, days: "3-5 days" },
-  northcentral: { fee: 3000, days: "4-6 days" },
-  northwest: { fee: 3500, days: "5-7 days" },
-  northeast: { fee: 4000, days: "6-8 days" },
+  zone1: { fee: 5000, days: "2-3 days" },
+  zone1one2: { fee: 7000, days: "3-4 days" },
+  zone3: { fee: 10000, days: "3-5 days" },
 };
 
 const REGIONS = {
-  southwest: {
-    name: "South West",
+  zone1: {
+    name: "Zone 1",
     states: ["lagos", "ogun", "oyo", "osun", "ondo", "ekiti"],
   },
-  southeast: {
-    name: "South East",
-    states: ["abia", "anambra", "ebonyi", "enugu", "imo"],
+  zone2: {
+    name: "Zone 2",
+    states: ["abia", "adamawa", "anambra", "ebonyi", "enugu", "imo", "akwa ibom", "bayelsa", "cross river", "rivers", "delta", "edo"],
   },
-  southsouth: {
-    name: "South South",
-    states: ["akwa Ibom", "bayelsa", "cross River", "delta", "edo", "rivers"],
-  },
-  northcentral: {
-    name: "North Central",
-    states: ["benue", "kogi", "kwara", "nasarawa", "niger", "plateau", "fct"],
-  },
-  northwest: {
-    name: "North West",
-    states: [
-      "jigawa",
-      "kaduna",
-      "kano",
-      "katsina",
-      "kebbi",
-      "sokoto",
-      "zamfara",
-    ],
-  },
-  northeast: {
-    name: "North East",
-    states: ["adamawa", "bauchi", "borno", "gombe", "taraba", "yobe"],
+  zone3: {
+    name: "Zone 3",
+    states: ["benue", "kogi", "taraba", "yobe", "gombe", "bauchi", "kwara", "nasarawa", "niger", "bornu", "plateau", "fct", "jigsaw", "kaduna", "kano", "katsina", "kebbi", "sokoto", "zamfara"],
   },
 };
 
@@ -301,7 +279,11 @@ const ShopContextProvider = (props) => {
  // FINAL DELIVERY FEE LOGIC
 const delivery_fee = useMemo(() => {
   if (ibadanFee === "ibadan") return 1000;
-  if (selectedState) return getDeliveryFee();
+  if (selectedState){
+    const fee = getDeliveryFee();
+    setDeliveryFee(fee)
+    return getDeliveryFee();
+  } 
   return 0;
 }, [ibadanFee, selectedState]);
 
@@ -335,7 +317,8 @@ const delivery_fee = useMemo(() => {
     setSelectedState,
     getDeliveryFee,
     getDeliveryInfo,
-    deliveryFee
+    deliveryFee,
+    setDeliveryFee
   };
 
   return (
