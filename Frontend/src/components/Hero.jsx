@@ -77,7 +77,7 @@ const Hero = () => {
       {/* Sound Toggle Button */}
       <button
         onClick={toggleSound}
-        className="absolute bottom-8 right-8 z-20 bg-white/20 backdrop-blur-md hover:bg-white/40 text-white p-4 rounded-full transition-all duration-300 shadow-2xl border border-white/30 group"
+        className="absolute bottom-8 right-8 z-20 bg-white/20 backdrop-blur-md hover:bg-white/40 text-white p-4 max-sm:p-2 rounded-full transition-all duration-300 shadow-2xl border border-white/30 group"
         aria-label={isMuted ? "Unmute video" : "Mute video"}
       >
         {isMuted ? (
