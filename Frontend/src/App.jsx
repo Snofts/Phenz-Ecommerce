@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Collection from "./pages/collection";
@@ -30,6 +30,20 @@ const ScrollToTop = () => {
 
 const App = () => {
   const { visible } = useContext(ShopContext);
+  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+
+  // SHOW LOADER ON ROUTE CHANGE
+  useEffect(() => {
+    setLoading(true);
+
+    // Small delay to ensure page transition feels smooth
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 600); // Adjust time if needed (400–800ms is perfect)
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (visible) {
@@ -44,10 +58,18 @@ const App = () => {
     };
   }, [visible]);
 
+  // FULL PAGE LOADER
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
+        <div className="w-16 h-16 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-6 text-lg font-medium text-gray-700">Loading PHENZ...</p>
+      </div>
+    );
+  }
+
   return (
-    <div
-      className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'
-    >
+    <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
       <ToastContainer />
       <ScrollToTop />
       <Navbar />
