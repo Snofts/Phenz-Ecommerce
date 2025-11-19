@@ -5,7 +5,6 @@ import axios from "axios";
 
 export const ShopContext = createContext();
 
-
 const DELIVERY_RATES = {
   ibadan: { fee: 1000, days: "1-2 days", message: "Special Ibadan Rate!" },
   zone1: { fee: 5000, days: "2-3 days" },
@@ -20,11 +19,44 @@ const REGIONS = {
   },
   zone2: {
     name: "Zone 2",
-    states: ["abia", "adamawa", "anambra", "ebonyi", "enugu", "imo", "akwa ibom", "bayelsa", "cross river", "rivers", "delta", "edo"],
+    states: [
+      "abia",
+      "adamawa",
+      "anambra",
+      "ebonyi",
+      "enugu",
+      "imo",
+      "akwa ibom",
+      "bayelsa",
+      "cross river",
+      "rivers",
+      "delta",
+      "edo",
+    ],
   },
   zone3: {
     name: "Zone 3",
-    states: ["benue", "kogi", "taraba", "yobe", "gombe", "bauchi", "kwara", "nasarawa", "niger", "bornu", "plateau", "fct", "jigsaw", "kaduna", "kano", "katsina", "kebbi", "sokoto", "zamfara"],
+    states: [
+      "benue",
+      "kogi",
+      "taraba",
+      "yobe",
+      "gombe",
+      "bauchi",
+      "kwara",
+      "nasarawa",
+      "niger",
+      "bornu",
+      "plateau",
+      "fct",
+      "jigsaw",
+      "kaduna",
+      "kano",
+      "katsina",
+      "kebbi",
+      "sokoto",
+      "zamfara",
+    ],
   },
 };
 
@@ -41,7 +73,7 @@ const ShopContextProvider = (props) => {
   const [visible, setVisible] = useState(false);
   const [selectedState, setSelectedState] = useState("");
   const [ibadanFee, setIbadanFee] = useState("");
-  const [deliveryFee, setDeliveryFee] = useState(0)
+  const [deliveryFee, setDeliveryFee] = useState(0);
   const navigate = useNavigate();
 
   //  const delivery_fee = 10;
@@ -251,9 +283,11 @@ const ShopContextProvider = (props) => {
 
   // Find region from state
   const getRegionFromState = (state) => {
-    if (state === "Ibadan") return "ibadan";
+    if (!state) return null;
+    const lowerState = state.toLowerCase();
+
     for (const [region, data] of Object.entries(REGIONS)) {
-      if (data.states.includes(state)) {
+      if (data.states.includes(lowerState)) {
         return region;
       }
     }
@@ -271,26 +305,38 @@ const ShopContextProvider = (props) => {
 
   // Get full delivery info
   const getDeliveryInfo = () => {
-  if (!selectedState) return {};
-  const region = getRegionFromState(selectedState);
-  return DELIVERY_RATES[region] || {};
-};
+    if (!selectedState) return {};
+    const region = getRegionFromState(selectedState);
+    return DELIVERY_RATES[region] || {};
+  };
 
- // FINAL DELIVERY FEE LOGIC
-const delivery_fee = useMemo(() => {
-  if (ibadanFee === "ibadan") return 1000;
-  if (selectedState){
-    const fee = getDeliveryFee();
-    setDeliveryFee(fee)
-    return getDeliveryFee();
-  } 
-  return 0;
-}, [ibadanFee, selectedState]);
+  // FINAL DELIVERY FEE LOGIC — IBADAN CITY ONLY
+useEffect(() => {
+  // Reset if no data
+  if (!selectedState || !ibadanFee) {
+    setDeliveryFee(0);
+    return;
+  }
+
+  const city = ibadanFee.toLowerCase().trim();
+  const state = selectedState.toLowerCase().trim();
+
+  // TRUE IBADAN LAW: City MUST be Ibadan AND State MUST be Oyo
+  if (city.includes("ibadan") && state === "oyo") {
+    setDeliveryFee(1000);
+    return;
+  }
+
+  // ALL OTHER CASES → USE STATE ONLY (even if city is Ibadan)
+  const region = getRegionFromState(state);
+  const fee = DELIVERY_RATES[region]?.fee || 0;
+  setDeliveryFee(fee);
+
+}, [selectedState, ibadanFee]);
 
   const value = {
     products,
     currency,
-    delivery_fee,
     search,
     setSearch,
     showSearch,
@@ -318,7 +364,7 @@ const delivery_fee = useMemo(() => {
     getDeliveryFee,
     getDeliveryInfo,
     deliveryFee,
-    setDeliveryFee
+    setDeliveryFee,
   };
 
   return (

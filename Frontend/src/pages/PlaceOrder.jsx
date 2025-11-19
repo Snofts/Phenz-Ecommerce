@@ -209,7 +209,7 @@ const PlaceOrder = () => {
             required
             onChange={(e) => {
               onChangeHandler(e); // Pass full event
-              setIbadanFee(e.target.value.toLowerCase());
+              setIbadanFee(e.target.value);
             }}
             name="city"
             value={formData.city}
@@ -221,7 +221,7 @@ const PlaceOrder = () => {
             required
             onChange={(e) => {
               onChangeHandler(e); // Pass full event
-              setSelectedState(e.target.value.toLowerCase());
+              setSelectedState(e.target.value);
             }}
             name="state"
             value={formData.state}
