@@ -20,7 +20,7 @@ const CartTotal = ({deliveryTag}) => {
         <div className='text-2xl'>
             <Title text1={'CART'} text2={'TOTALS'} />
         </div>
-        <div className='flex flex-col mt-2 gap-2 text-xs'>
+        <div className='flex flex-col mt-2 gap-2 text-sm'>
             <div className='flex justify-between'>
                 <p>Subtotal</p>
                 <p>{currency} {getCartAmount()}.00</p>
